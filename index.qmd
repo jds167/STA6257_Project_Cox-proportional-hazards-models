@@ -1,6 +1,6 @@
 ---
-title: "Report Sample"
-author: "Student name"
+title: "Cox Proportional Hazards Model"
+author: "Halley Deleeuw and Jasmine Sawh"
 date: '`r Sys.Date()`'
 format:
   html:
@@ -19,6 +19,7 @@ editor:
 
 ## Introduction
 
+Here is where I will work on the introduction for Quiz 5 
 This is an introduction to Kernel regression, which is a non-parametric
 estimator that estimates the conditional expectation of two variables
 which is random. The goal of a kernel regression is to discover the

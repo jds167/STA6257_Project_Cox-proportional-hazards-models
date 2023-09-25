@@ -1,21 +1,7 @@
 # Instructions
 
-Create a GitHub page for the project
+#### This github is dedicated to STA6257 Advanced Statistical Modeling class. The files will contain the project for Cox Proportional Hazards Model by Halley Deleeuw and Jasmine Sawh. 
 
-## GitHub:
-#### 1. Create a GitHub account and Sign in
-#### 2. Go to https://github.com/acohenstat/STA6257_Project and fork (create a copy to your GitHub)
-![fork](fork.png)
-#### 3. Change the name of the repo to *STA6257_Project_NameofGroup*
-#### 4. Go to *Settings* -> *Pages* -> under *Branch* -> select *main*
-#### 5. Wait for a few seconds and refresh the page. You see the link of the page. 
+## Under the Journal Entries file you will find the sumamrizes Jasmine has made thus far on various research papers. Coming soon, there will be an additional Journal Entires combining Halley Deleeuw's work. 
 
-## RStudio:
-#### 1. Go to RStudio
-#### 2. Create a Version Control Project and Clone the repo.
-#### 3. Commit and push to see changes on the website et Voilà!
 
-More information:
-- [GitHub](https://happygitwithr.com/index.html)
-- [Video1 RStudio connection to GitHub](https://www.youtube.com/watch?v=MdmnE3AnkQE)
-- [Video2 RStudio connection to GitHub](https://www.youtube.com/watch?v=jN6tvgt3GK8)
