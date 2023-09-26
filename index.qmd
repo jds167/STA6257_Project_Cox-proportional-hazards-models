@@ -19,15 +19,14 @@ editor:
 
 ## Introduction
 
-Here is where I will work on the introduction for Quiz 5 
-This is an introduction to Kernel regression, which is a non-parametric
-estimator that estimates the conditional expectation of two variables
-which is random. The goal of a kernel regression is to discover the
-non-linear relationship between two random variables. To discover the
-non-linear relationship, kernel estimator or kernel smoothing is the
-main method to estimate the curve for non-parametric statistics. In
-kernel estimator, weight function is known as kernel function
-[@efr2008]. Cite this paper [@bro2014principal]. The GEE [@wang2014].
+This is an introduction to Cox Proportional Hazards regression, which is a statistical method used for survival analysis. It uses a semi-parametric estimator that focuses on estimating the hazard function which represents the instantaneous risk of an event occurring at a given time. It's mostly used in industries such as medical, epidemiology and various other fields where they need to analyze data pertaining to a failure or an event such as death or relapse. [Gonzalez-Dominguez] The purpose of Cox Proportional Hazards regression is to find the relationship between one or more independent variables and the hazard function while allowing for the exploration in non-linearity and time-varying effects. [W.W.M Abeysekera] The dependent variable in a hazard model consist of two parts, the first part is the event indicator and the second part is a measure of time. [Jane E.Miller] The purpose of this paper is to take a dive deeper into this regression model by analyzing the (insert data set here). This data set will use the regression to [add pertaining information here]. 
+
+(This is a note for myself so I know where I got each information from so I can properly cite it later.)
+Gonzalez-Dominguez Cox Proportional Hazards model used for predictive analysis of the energy consumption of healthcare buildings. 
+W.W.M Abeysekera Use of Schoenfeld’s global test to test the proportional hazards
+assumption in the Cox proportional hazards model: an application
+to a clinical study
+
 
 ## Methods
 
