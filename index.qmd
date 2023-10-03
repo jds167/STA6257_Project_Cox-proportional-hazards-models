@@ -99,8 +99,6 @@ Cox Proportional Hazard model is a statistical method that has been used for sur
 
 ###Note we will be using the Seer cancer dataset. Please look at the github uploaded documents to take a look at the dataset we have chosen. We are still looking at the variables to consider, but we have narrowed it down to the what's shown on the file as well as race and ethnicity. This data is provided by the National Cancer Institute Surveillance, Epidemiology and End Results Program. 
 
-
-
 ## Methods
 
 The common non-parametric regression model is
