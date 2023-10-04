@@ -18,3 +18,4 @@ df2 <- df %>%
   )
 
 print(df)
+df2$Survival.months <- as.numeric(df$Survival.months)
