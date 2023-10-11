@@ -1,0 +1,138 @@
+---
+title: "Cox Proportional Hazards Model"
+author: "Halley Deleeuw and Jasmine Sawh"
+date: '`r Sys.Date()`'
+format:
+  html:
+    code-fold: true
+course: STA 6257 - Advanced Statistical Modeling
+bibliography: references.bib # file contains bibtex for references
+#always_allow_html: true # this allows to get PDF with HTML features
+self-contained: true
+execute: 
+  warning: false
+  message: false
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+## Literature Review 
+
+### Jasmine's Week 2
+
+These are the two papers I looked at thus far that I wanted to discuss and make a note of since they both compliment each other well. The first paper [@Abeysekera2009] was helpful when understanding the baseline of Cox Proportional Hazard model. It uses the model to check if the Proportional Hazards Assumptions are true. In order to test this they used the the global goodness-of-fit test proposed by Schoenfeld. The authors used an example from a clinical study involving heroin addicts who were getting methadone treatments. There were three components that were looked at which were the highest meth dose, addicts with a criminal record vs not, and how long they were treated at a clinic. What I really enjoyed about this paper and what I want to make note of is the math and coding behind the method. It explained it really well and included the code on the bottom of the paper. The second link was different but also helpful as well [@Fan2002]. The purpose of this one is to discuss variable selection techniques to the Cox Proportional Hazard model. I wanted to note this one since this can help my partner and I when it comes to approaching a data set and identifying the most important predictors. This paper doesn't go into particular depth of a hazard model like the first one. However, it shows the mathematical reasoning to choose a predictor and the outcome of the model when using their approach. 
+
+### Jasmine's Week 3
+
+The first article I read was the Cox Proportional Hazards model used for predictive analysis of the energy consumption of healthcare buildings[@Ben-Assuli2023]. The goal of paper was to analyze and predict excessive energy consumption in healthcare buildings. The parameters that were studied was building construction, facilities, demographics and climate. The authors took these variables in order to see the what effects it has to energy overconsumption. The importance of the paper is to find ways for spending on energy as well as analyzing the key facts or consumption in healthcare buildings. The study was done on 64 healthcare buildings in Spain and used the Cox Proportional Hazards model to analyze. The model was adapted to predict energy overconsumption which I thought was interesting route to take for the study. The two variables that ended up being significant was demographic and facilities. I would like to note that this was only conducted in Spain’s region so the demographic column might not be a reliable factor. Also, this was a different approach in using Cox Proportional Hazard model. 
+
+The second article I read was Utilizing shared frailty with the Cox proportional hazards regression: Post discharge survival analysis of CHF patients[@Gonzalez-Dominguez2022]. The goal of the paper is is to find the survival probability of patients with congestive heart failure and identify the factors affecting their early mortality within 90 days after hospital discharge. This paper is interesting because it uses survival analysis with Cox proportional hazards model as well as comparing it with a shared frailty correction. After further research not his I found that shared frailty correction is a technique used in survival analysis to account for unobserved or variability among subjects in a study that can effect their risk of an event. Unlike the Cox Proportional Hazards model, it assumes that the hazard ratios for different individuals are constant over time and that each observation is independent. The dataset that was used for the study was from the Israeli Sheba Medical Center and used variables such as patients records with demographic, clinical, medical and lab test data for a total of 18 variables. The authors found that shared frailty correction significantly improves the Cox Proportional model especially with dependent observations. This is a model I feel like would be beneficial in our capstone to utilize since it can further improve our model. 
+
+### Jasmine's Week 4
+
+This paper has used a different set of data utilizing the Cox Proportional Hazard model[@Equeter2020]. It focuses on predicting the Mean Up Time of cutting tool insets based on a single cutting parameter: cutting speed. They employed the model for the predication and did so by transforming the data. Although I was confused at the use of the Cox Proportional Hazard model, the authors thought it was a good fit for assessing tool lifespan and has been used in previous machining studies. The first step the author does is generate degradation paths using a gamma process. The gamma process is employed to generate a set of tool lifetimes. Another part that I was surprised in was the author used a logarithmic transformation of cutting speed in order to improve in prediction performance. In addition, the author uses a piecewise stochastic model for flank wear in order to see the effects at the beginning to the end of the tool life. This paper is helpful when looking at appropriate data for using the Cox Proportional Hazard model. I would like to revisit it when my partner and I want to pick a data set as it sets out important notes to consider such as data transformation, logarithmic transformation and size of the data.
+
+This paper showed the method and the coding for the Cox Proportional Hazard[@Faruk2018]. The researchers used data from the 2012 Indonesian Demographic and Health Survey for the first birth interval. They compared the performance of the model to the three accelerated failure time models by Weibull, exponential and log-normal distributions. The data was assessed for violations of the assumption through log cumulative hazard plots and statistical tests. In the paper, one shortfall that I feel wasn't addressed was the results of the analysis of the data. It was discussed how they employed the log cumulative hazard plots and Goodness-Of-Fit test. The analysis identified significant covariates, including women's education level, husband's education level, contraceptive knowledge, access to mass media, wealth index, and employment status.
+
+
+### Halley Week 2
+
+Summary: This article discusses how Cox proportional methods are used in a study of post-surgical patients with stage 3 lung cancer[Deo2021]. The authors calculated the survival estimates using the Kaplan-Meier estimates, which I discuss and reference in a different article. They used log-rank test to compare the survival rates between the two groups (males and females). They discuss the advantages and disadvantages of using log-rank test. Then they discuss the assumptions of the CPH test and how it is advantageous for clinical research. They observed that patients that are the same age, females have a 41% reduced risk of mortality and a 1 unit increase in age increases the risk of mortality by 1%.
+
+Summary: The authors use the Rossi data set in the carData package in R[Fox2023]. The data explores recidivism rates among males in a prison. They created a Cox regression time of re-arrest. They went into detail about how to read the output of the different coefficients. Then, they showed a graph of the estimated survival prediction. There is a specific package in r called Survival, which is useful for this type of analysis.
+
+Summary: This article goes into depth on what the log-rank test is that I mentioned above[Bland2004]. It is used to compare the survival rates between two groups. The log-rank test gives a comparison at some arbitraty point in the point, instead of comparing the whole survival time to one another. The log-rank test is also based on the same assumptions as the Kaplan test. The log-rank test is also more likely to detect a different in the groups when the risk for the outcome of interest is higher in one of the groups. 
+
+### Halley's Week 3
+
+Summary: The goal of this study is to see whether hazard ration, relative risk, and other estimates made by the Cox Proportional Hazards model are biased when the basic assumptions of the model are violated[@Abeysekera2009]. This is very important because whenever regression models are run, not just Cox Proportional Hazards models, many times we take for granted that the assumptions of the model are met. This can lead to incorrect conclusions and predictions. The Cox model assumes that the hazard ratios remain constant over time. If this is violated, then the model may falsely suggest that a variable is significant or vice versa. This study showed an example where the hazards ratio is not constant over time. An example was with the age of smokers and the RR as age increased. As there was an increase in cumulative smoking exposure, the RR decrease after 50. It was also addressed how in the Cox PH model, there is increased emphasis on the Relative Risk. This is convenient because it doesn't require estimating background information. They first examined survival curves by smoking status and then compared a simulated data set could define mortality to a real data set. They found that single minded focus on PH models have hindered the development of other models in epidemiologic data. Sometimes hazard functions, rather than the rate of hazard functions may be a better alternative. 
+
+Summary: The goal of this paper is very similar to the first study[@Kuitunen2021]. It investigates, in detail, the reporting of the model details as well as the model assumptions with total joint arthroplasty studies. Nearly 80% of the Cox proportional hazards were reported inadequately. However, it is still amongst the most used models. One of the solutions was to hire statisticians to review the process and make sure reproducible results are created. 
+
+### Halley's Week 4
+
+Summary: This article tests the strength of proportional hazards in total joint arthroplasty studies[@Ponkilainene2021]. They found a total of 1154 studies by searching for "cox" AND "hazard" in the abstract. The abstract also had to meet the following criteria: the topic must be on 
+knee or hip joint arthroplasty, survival analysis was used, and a hazard ratio was reported. If those criteria were met, the entire article was read. Nearly 80% of the published TJA survival studies reported proportional hazard assumptions of the Cox regression model 
+inadequately. Also, more than one-fifth of the studies were found to include a probable non-proportional Cox model.
+
+Summary: This article uses a cox proprtional hazards model to study the relationship between sleepiness and prediction of a driver's impairment[@Vadeby2010]. The approach was to only use the parametric part of the hazard function to study changes in risk of a critical event
+(lane change) due to changes in the explanatory variables (indicators). The probability of a critical event is proportional to the hazard function and therefore the changes in risk can be estimated by changes in the hazard function. All co-variates were statistically significant.
+
+## Introduction
+
+Cox Proportional Hazard model is a statistical method that has been used for survival analysis and epidemiological research. The model emerged in 1972 by Sir David R. Cox. The model provides researchers with a robust framework for understanding time-to-event data. It uses a semi-parametric estimator that focuses on estimating the hazard function which represents the instantaneous risk of an event occurring at a given time. The purpose of Cox Proportional Hazards regression is to find the relationship between one or more independent variables and the hazard function while allowing for the exploration in non-linearity and time-varying effects[@Abeysekera2009]. 
+
+The fundamental principles of the Cox Proportional Hazard model and its applications range across various research domains. The model primarily focuses on estimating the hazard function, which represents the instantaneous risk of an event occuring at any given time. The dependent variable in a hazard model consist of two parts, the first part is the event indicator and the second part is a measure of time [@Ponkilainene2021]. The model provides invaluable insights across diverse fields such as healthcare, engineering, social sciences, and beyond. It unravels the relationship between covariates and the hazard rate which represents the instantaneous risk of an event occurring at a given time. 
+
+By analyzing how the various predictors influence the hazard rate over time, researchers can gain a deeper understanding of the factors that impact outcomes such as patient survival, equipment failure or the likelihood of an individual re-offering. There are studies using the model to gain more insight on heroin addicts and if they were getting methadone treatments[@Abeysekera2009]. There are even some studies that found the predictive analysis of the energy consumption of healthcare buildings and predict the excessive energy[@Ben-Assuli2023]. The Cox Proportional Hazard model can even be used in predicting the Mean Up Time of cutting tools inserts based on a single cutting parameter, cutting speed[@Equeter2020]. By being able to  study and analyze this, the Cox Proportional Hazard model has become a vital tool for addressing a wide range of research questions. The key strength when it comes to working with Cox Proportional Hazard model is that it is able to handle censor data. Since most studies utilize real-world scenarios such as in a biomedical study conducted [@Ben-Assuli2023] where study the post discharge survival analysis of CHF patients, not all studies completed their observations by the end of the study. For example in the CHF patients, the authors also utilized shared frailty correction technique in order to account for unobserved or variability amount subjects in the study that can effect their likelihood of an event. The Cox Proportional Hazard model also extends its utility to medical research. Another article examines its use in post-discharge survival analysis of congestive heart failure patients, employing not only the Cox Proportional model but also shared frailty correction[@Gonzalez-Dominguez2022].A technique to account for unobserved or variable factors that can influence an individual's risk of an event. This demonstrates the adaptability of the model to address complex medical scenarios. 
+
+Although the diversity with the Cox Proportional Hazard model is myriad, it still has its limitations. Not every data set is fit for the model and can present more issues when using the model to conduct research. For this paper, we have decided to explore a cancer data set provided by SEER (National Cancer Institute Surveillance, Epidemiology and End Results Program). We will be analyzing the variables such as site record, sex, age record, COD to site record, death classification, and ethnicity to see what influences the time until death. (Once report is complete should also dive into what we are trying to accomplish and study) 
+
+Note we will be using the Seer cancer dataset. Please look at the github uploaded documents to take a look at the dataset we have chosen. We are still looking at the variables to consider, but we have narrowed it down to the what's shown on the file as well as race and ethnicity. This data is provided by the National Cancer Institute Surveillance, Epidemiology and End Results Program (SEER)0 
+
+## Methods
+
+The common non-parametric regression model is
+$Y_i = m(X_i) + \varepsilon_i$, where $Y_i$ can be defined as the sum of
+the regression function value $m(x)$ for $X_i$. Here $m(x)$ is unknown
+and $\varepsilon_i$ some errors. With the help of this definition, we
+can create the estimation for local averaging i.e. $m(x)$ can be
+estimated with the product of $Y_i$ average and $X_i$ is near to $x$. In
+other words, this means that we are discovering the line through the
+data points with the help of surrounding data points. The estimation
+formula is printed below [@R-base]:
+
+$$
+M_n(x) = \sum_{i=1}^{n} W_n (X_i) Y_i  \tag{1}
+$$ $W_n(x)$ is the sum of weights that belongs to all real numbers.
+Weights are positive numbers and small if $X_i$ is far from $x$.
+
+## Analysis and Results
+
+### Data and Vizualisation0
+
+A study was conducted to determine how...
+
+
+```{r, warning=FALSE, echo=T, message=FALSE}
+# loading packages 
+library(tidyverse)
+library(knitr)
+library(ggthemes)
+library(ggrepel)
+library(dslabs)
+library(survival)
+library(dplyr)
+```
+
+```{r, warning=FALSE, echo=TRUE}
+data <- read.csv("C:/Users/shawj/Downloads/export2.csv", header=FALSE)
+head(data)
+# Delete rows where 'status' equals "Alive"
+df <- subset(data, data$V7 != "Alive")
+
+df2 <- df %>%
+  rename(
+    Age = V5,  
+    Race = V8,  
+    Origin = V6,  
+    Site = V2, 
+    Median_Household_Income = V4,  
+    COD_Site = V7  
+  )
+print(df2)
+```
+
+```{r, warning=FALSE, echo=TRUE}
+
+```
+
+### Statistical Modeling
+
+### Conlusion
+
+## References
+
+\[ \cite{Abeysekera2009}, \cite{Ben-Assuli2023}, \cite{Equeter2020}, \cite{Fan2002}, \cite{Gonzalez-Dominguez2022}, \cite{Faruk2018}, \cite{Deo2021}, \cite{Fox2023}, \cite{Bland2004}, \cite{Kuitunen2021}, \cite{Ponkilainene2021}, \cite{Vadeby2010} \]
+

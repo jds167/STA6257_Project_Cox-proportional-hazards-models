@@ -107,27 +107,23 @@ library(dplyr)
 ```{r, warning=FALSE, echo=TRUE}
 data <- read.csv("C:/Users/shawj/Downloads/export2.csv", header=FALSE)
 head(data)
-
 # Delete rows where 'status' equals "Alive"
-df <- subset(data, COD.to.site.recode != "Alive")
+df <- subset(data, data$V7 != "Alive")
 
 df2 <- df %>%
   rename(
-    Age = Age.recode.with.single.ages.and.85.,
-    Race = Race.ethnicity,
-    Origin = Origin.recode.NHIA..Hispanic..Non.Hisp.,
-    Site = Site.recode.ICD.O.3.WHO.2008,
-    Median_Household_Income = Median.household.income.inflation.adj.to.2019,
-    COD_Site = COD.to.site.recode
+    Age = V5,  
+    Race = V8,  
+    Origin = V6,  
+    Site = V2, 
+    Median_Household_Income = V4,  
+    COD_Site = V7  
   )
-
-df2$Survival.months <- as.numeric(df$Survival.months)
-
-# Print df2 to see the updated data frame
 print(df2)
+```
+```{r, warning=FALSE, echo=TRUE}
 
 ```
-
 ### Statistical Modeling
 
 ### Conlusion
