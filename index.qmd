@@ -1,5 +1,7 @@
+
 ---
 title: "Cox Proportional Hazards Model"
+output: html_document
 author: "Halley Deleeuw and Jasmine Sawh"
 date: '`r Sys.Date()`'
 format:
@@ -105,21 +107,91 @@ library(dplyr)
 ```
 
 ```{r, warning=FALSE, echo=TRUE}
-data <- read.csv("C:/Users/shawj/Downloads/export2.csv", header=FALSE)
-head(data)
-# Delete rows where 'status' equals "Alive"
-df <- subset(data, data$V7 != "Alive")
+library(survival)
+library(dplyr)
+library(gtsummary)
+library(gt)
+library(htmlTable)
+library(IRdisplay)
+data <- read.csv("C:/Users/DeleeuwH/Documents/Seer_updated.csv")
 
-df2 <- df %>%
+
+df <- data %>%
   rename(
-    Age = V5,  
-    Race = V8,  
-    Origin = V6,  
-    Site = V2, 
-    Median_Household_Income = V4,  
-    COD_Site = V7  
-  )
-head(df2)
+    Age = Age.recode.with.single.ages.and.85.,
+    Race = Race.ethnicity,
+    Sex = Sex,
+    Origin = Origin.recode.NHIA..Hispanic..Non.Hisp.,
+    Year.of.diagnosis = Year.of.diagnosis,
+    Survival.months = Survival.months,
+    COD_Site = COD.to.site.recode,
+    Primary.Site = Primary.Site,
+    Median_Household_Income = Median.household.income.inflation.adj.to.2019
+  ) %>%
+  mutate(survived = ifelse(COD_Site == "Alive", 0, 1))
+  df$Age <- sub(" years", "", df$Age)
+  df$Age <- as.numeric(df$Age)
+  df$Survival.months <- as.numeric(df$Survival.months)
+
+
+
+
+
+styled_table <- df %>%
+  select(
+    Age,
+    Race,
+    Sex,
+    survived,
+    Origin,
+    Year.of.diagnosis,
+    Survival.months,  # Modified to use the numeric "Survival.months"
+    COD_Site,
+    Median_Household_Income
+  ) %>%
+  tbl_summary(
+    type = list(
+      Age ~ 'continuous2',
+      Race ~ 'categorical',
+      Sex ~ 'categorical',
+      Origin ~ 'categorical',
+      Year.of.diagnosis ~ 'continuous2',
+      Survival.months ~ 'continuous2',  # Using "Survival.months" as a continuous variable
+      COD_Site ~ 'categorical',
+      Median_Household_Income ~ 'categorical'
+    ),
+    label = list(
+      Age ~ "Patient Age",
+      Race ~ "Patient Race",
+      Sex ~ "Patient Gender",
+      Origin ~ "Patient's Origin",
+      Year.of.diagnosis ~ "Year of Diagnosis",
+      Survival.months ~ "# of months after diagnosis",
+      COD_Site ~ "Cause of Death Type",
+      Median_Household_Income ~ "Median Household Income"
+    ),
+    statistic = all_continuous() ~ c("{median} ({p25}, {p75})", "{min}, {max}"),
+    by = survived
+  ) %>%
+ add_overall(last = TRUE) %>%
+  bold_labels() %>%
+  italicize_levels()
+
+# Export the styled table to an HTML file
+html_table <- styled_table %>%
+  as_gt() %>%
+  gt::as_raw_html()
+
+# Save the HTML table to a file
+writeLines(html_table, "styled_table.html")
+
+styled_table %>%
+  as_gt() %>%
+  gt::as_raw_html()
+
+
+
+
 ```
 ```{r, warning=FALSE, echo=TRUE}
 
