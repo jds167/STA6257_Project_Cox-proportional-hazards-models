@@ -60,7 +60,13 @@ Summary: This article uses a cox proprtional hazards model to study the relation
 
 ## Introduction
 
-Cox Proportional Hazard model is a statistical method that has been used for survival analysis and epidemiological research. The model emerged in 1972 by Sir David R. Cox. The model provides researchers with a robust framework for understanding time-to-event data. It uses a semi-parametric estimator that focuses on estimating the hazard function which represents the instantaneous risk of an event occurring at a given time. The purpose of Cox Proportional Hazards regression is to find the relationship between one or more independent variables and the hazard function while allowing for the exploration in non-linearity and time-varying effects[@Abeysekera2009]. The dependent variable in a hazard model consist of two parts, the first part is the event indicator and the second part is a measure of time. The model provides invaluable insights across diverse fields such as healthcare, engineering, social sciences, and beyond. It unravels the relationship between covariates and the hazard rate which represents the instantaneous risk of an event occurring at a given time. By analyzing how the various predictors influence the hazard rate over time, researchers can gain a deeper understanding of the factors that impact outcomes such as patient survival, equipment failure or the likelihood of an individual re-offering. There are studies using the model to gain more insight on heroin addicts and if they were getting methadone treatments[@Abeysekera2009]. There are even some studies that found the predictive analysis of the energy consumption of healthcare buildings and predict the excessive energy[@Ben-Assuli2023]. The Cox Proportional Hazard model can even be used in predicting the Mean Up Time of cutting tools inserts based on a single cutting parameter, cutting speed[@Equeter2020]. By being able to  study and analyze this, the Cox Proportional Hazard model has become a vital tool for addressing a wide range of research questions. The key strength when it comes to working with Cox Proportional Hazard model is that it is able to handle censor data. Since most studies utilize real-world scenarios such as in a biomedical study conducted [@Ben-Assuli2023] where study the post discharge survival analysis of CHF patients, not all studies completed their observations by the end of the study. For example in the CHF patients, the authors also utilized shared frailty correction technique in order to account for unobserved or variability amount subjects in the study that can effect their likelihood of an event. Although the diversity with the Cox Proportional Hazard model is myriad, it still has its limitations. Not every data set is fit for the model and can present more issues when using the model to conduct research. For this paper, we have decided to explore a cancer data set provided by SEER (National Cancer Institute Surveillance, Epidemiology and End Results Program). We will be analyzing the variables such as site record, sex, age record, COD to site record, death classification, and ethnicity to see what influences the time until death. (Once report is complete should also dive into what we are trying to accomplish and study) 
+Cox Proportional Hazard model is a statistical method that has been used for survival analysis and epidemiological research. The model emerged in 1972 by Sir David R. Cox. The model provides researchers with a robust framework for understanding time-to-event data. It uses a semi-parametric estimator that focuses on estimating the hazard function which represents the instantaneous risk of an event occurring at a given time. The purpose of Cox Proportional Hazards regression is to find the relationship between one or more independent variables and the hazard function while allowing for the exploration in non-linearity and time-varying effects[@Abeysekera2009]. 
+
+The fundamental principles of the Cox Proportional Hazard model and its applications range across various research domains. The model primarily focuses on estimating the hazard function, which represents the instantaneous risk of an event occuring at any given time. The dependent variable in a hazard model consist of two parts, the first part is the event indicator and the second part is a measure of time [@Ponkilainene2021]. The model provides invaluable insights across diverse fields such as healthcare, engineering, social sciences, and beyond. It unravels the relationship between covariates and the hazard rate which represents the instantaneous risk of an event occurring at a given time. 
+
+By analyzing how the various predictors influence the hazard rate over time, researchers can gain a deeper understanding of the factors that impact outcomes such as patient survival, equipment failure or the likelihood of an individual re-offering. There are studies using the model to gain more insight on heroin addicts and if they were getting methadone treatments[@Abeysekera2009]. There are even some studies that found the predictive analysis of the energy consumption of healthcare buildings and predict the excessive energy[@Ben-Assuli2023]. The Cox Proportional Hazard model can even be used in predicting the Mean Up Time of cutting tools inserts based on a single cutting parameter, cutting speed[@Equeter2020]. By being able to  study and analyze this, the Cox Proportional Hazard model has become a vital tool for addressing a wide range of research questions. The key strength when it comes to working with Cox Proportional Hazard model is that it is able to handle censor data. Since most studies utilize real-world scenarios such as in a biomedical study conducted [@Ben-Assuli2023] where study the post discharge survival analysis of CHF patients, not all studies completed their observations by the end of the study. For example in the CHF patients, the authors also utilized shared frailty correction technique in order to account for unobserved or variability amount subjects in the study that can effect their likelihood of an event. The Cox Proportional Hazard model also extends its utility to medical research. Another article examines its use in post-discharge survival analysis of congestive heart failure patients, employing not only the Cox Proportional model but also shared frailty correction[@Gonzalez-Dominguez2022].A technique to account for unobserved or variable factors that can influence an individual's risk of an event. This demonstrates the adaptability of the model to address complex medical scenarios. 
+
+Although the diversity with the Cox Proportional Hazard model is myriad, it still has its limitations. Not every data set is fit for the model and can present more issues when using the model to conduct research. For this paper, we have decided to explore a cancer data set provided by SEER (National Cancer Institute Surveillance, Epidemiology and End Results Program). We will be analyzing the variables such as site record, sex, age record, COD to site record, death classification, and ethnicity to see what influences the time until death. (Once report is complete should also dive into what we are trying to accomplish and study) 
 
 Note we will be using the Seer cancer dataset. Please look at the github uploaded documents to take a look at the dataset we have chosen. We are still looking at the variables to consider, but we have narrowed it down to the what's shown on the file as well as race and ethnicity. This data is provided by the National Cancer Institute Surveillance, Epidemiology and End Results Program (SEER)0 
 
@@ -83,7 +89,7 @@ Weights are positive numbers and small if $X_i$ is far from $x$.
 
 ## Analysis and Results
 
-### Data and Vizualisation
+### Data and Vizualisation0
 
 A study was conducted to determine how...
 
@@ -94,25 +100,31 @@ library(knitr)
 library(ggthemes)
 library(ggrepel)
 library(dslabs)
+library(survival)
+library(dplyr)
 ```
 
 ```{r, warning=FALSE, echo=TRUE}
-# Load Data
-kable(head(murders))
+data <- read.csv("C:/Users/shawj/Downloads/export2.csv", header=FALSE)
+head(data)
 
-ggplot1 = murders %>% ggplot(mapping = aes(x=population/10^6, y=total)) 
+# Delete rows where 'status' equals "Alive"
+df <- subset(data, COD.to.site.recode != "Alive")
 
-  ggplot1 + geom_point(aes(col=region), size = 4) +
-  geom_text_repel(aes(label=abb)) +
-  scale_x_log10() +
-  scale_y_log10() +
-  geom_smooth(formula = "y~x", method=lm,se = F)+
-  xlab("Populations in millions (log10 scale)") + 
-  ylab("Total number of murders (log10 scale)") +
-  ggtitle("US Gun Murders in 2010") +
-  scale_color_discrete(name = "Region")+
-      theme_bw()
-  
+df2 <- df %>%
+  rename(
+    Age = Age.recode.with.single.ages.and.85.,
+    Race = Race.ethnicity,
+    Origin = Origin.recode.NHIA..Hispanic..Non.Hisp.,
+    Site = Site.recode.ICD.O.3.WHO.2008,
+    Median_Household_Income = Median.household.income.inflation.adj.to.2019,
+    COD_Site = COD.to.site.recode
+  )
+
+df2$Survival.months <- as.numeric(df$Survival.months)
+
+# Print df2 to see the updated data frame
+print(df2)
 
 ```
 
