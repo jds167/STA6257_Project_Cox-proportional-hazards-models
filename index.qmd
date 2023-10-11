@@ -119,7 +119,7 @@ df2 <- df %>%
     Median_Household_Income = V4,  
     COD_Site = V7  
   )
-print(df2)
+head(df2)
 ```
 ```{r, warning=FALSE, echo=TRUE}
 
