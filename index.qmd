@@ -129,45 +129,67 @@ df <- data %>%
     Median_Household_Income = Median.household.income.inflation.adj.to.2019
   ) %>%
   mutate(survived = ifelse(COD_Site == "Alive", 0, 1))
+df <- df %>%
+  mutate(survived = case_when(
+    survived == 0 ~ "Alive",
+    survived == 1 ~ "Dead",
+    TRUE ~ as.character(survived)  # Keep other values as they are
+  ))
   df$Age <- sub(" years", "", df$Age)
   df$Age <- as.numeric(df$Age)
   df$Survival.months <- as.numeric(df$Survival.months)
-
-
+  df$Race_Category <- case_when(
+  df$Race %in% c("White") ~ "White",
+  df$Race %in% c("Black") ~ "Black",
+  df$Race %in% c("Asian Indian", "Asian Indian or Pakistani", "Chinese", "Japanese", "Korean", "Thai", "Vietnamese", "Other Asian") ~ "Asian",
+  df$Race %in% c("Chamorran", "Fiji Islander", "Guamanian", "Hawaiian", "Micronesian", "Samoan", "Tahitian", "Tongan", "Pacific Islander") ~ "Pacific      Islander",
+  TRUE ~ "Other/Miscellaneous"
+)
+df <- df %>%
+  mutate(
+    Cancer_Group = case_when(
+      df$COD_Site %in% c("Colon excluding Rectum", "Rectum and Rectosigmoid Junction") ~ "Colorectal",
+      df$COD_Site %in% c("Lung and Bronchus") ~ "Lung Cancer",
+      df$COD_Site %in% c("Pancreas") ~ "Pancreatic Cancer",
+      df$COD_Site %in% c("Breast") ~ "Breast Cancer",
+      df$COD_Site %in% c("Prostate") ~ "Prostate Cancer",
+      TRUE ~ "Other"
+    )
+  )
 
 
 
 styled_table <- df %>%
   select(
     Age,
-    Race,
+    Race_Category,
     Sex,
     survived,
     Origin,
     Year.of.diagnosis,
     Survival.months,  # Modified to use the numeric "Survival.months"
-    COD_Site,
+    Cancer_Group,
     Median_Household_Income
   ) %>%
   tbl_summary(
     type = list(
       Age ~ 'continuous2',
-      Race ~ 'categorical',
+      Race_Category ~ 'categorical',
       Sex ~ 'categorical',
       Origin ~ 'categorical',
       Year.of.diagnosis ~ 'continuous2',
       Survival.months ~ 'continuous2',  # Using "Survival.months" as a continuous variable
-      COD_Site ~ 'categorical',
+      Cancer_Group ~ 'categorical',
       Median_Household_Income ~ 'categorical'
     ),
     label = list(
       Age ~ "Patient Age",
-      Race ~ "Patient Race",
+      Race_Category ~ "Patient Race",
       Sex ~ "Patient Gender",
       Origin ~ "Patient's Origin",
       Year.of.diagnosis ~ "Year of Diagnosis",
       Survival.months ~ "# of months after diagnosis",
-      COD_Site ~ "Cause of Death Type",
+      Cancer_Group ~ "Cause of Death Type",
       Median_Household_Income ~ "Median Household Income"
     ),
     statistic = all_continuous() ~ c("{median} ({p25}, {p75})", "{min}, {max}"),
