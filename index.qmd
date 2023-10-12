@@ -20,7 +20,7 @@ editor:
 ---
 ## Literature Review 
 
-### Jasmine's Week 2
+
 
 These are the two papers I looked at thus far that I wanted to discuss and make a note of since they both compliment each other well. The first paper [@Abeysekera2009] was helpful when understanding the baseline of Cox Proportional Hazard model. It uses the model to check if the Proportional Hazards Assumptions are true. In order to test this they used the the global goodness-of-fit test proposed by Schoenfeld. The authors used an example from a clinical study involving heroin addicts who were getting methadone treatments. There were three components that were looked at which were the highest meth dose, addicts with a criminal record vs not, and how long they were treated at a clinic. What I really enjoyed about this paper and what I want to make note of is the math and coding behind the method. It explained it really well and included the code on the bottom of the paper. The second link was different but also helpful as well [@Fan2002]. The purpose of this one is to discuss variable selection techniques to the Cox Proportional Hazard model. I wanted to note this one since this can help my partner and I when it comes to approaching a data set and identifying the most important predictors. This paper doesn't go into particular depth of a hazard model like the first one. However, it shows the mathematical reasoning to choose a predictor and the outcome of the model when using their approach. 
 
