@@ -20,11 +20,11 @@ editor:
 ---
 ## Literature Review 
 
-### Introduction to Cox Proportional Hazards Model 
+#### Introduction to Cox Proportional Hazards Model 
 
 These two articles provide a great insight when discussing the Cox Proportional Model.  The first paper [@Abeysekera2009] was helpful when understanding the baseline of Cox Proportional Hazard model. It uses the model to check if the Proportional Hazards Assumptions are true. In order to test this they used the the global goodness-of-fit test proposed by Schoenfeld. The authors used an example from a clinical study involving heroin addicts who were getting methadone treatments. There were three components that were looked at which were the highest meth dose, addicts with a criminal record vs not, and how long they were treated at a clinic. What I really enjoyed about this paper and what I want to make note of is the math and coding behind the method. It explained it really well and included the code on the bottom of the paper. The second link was different but also helpful as well [@Fan2002]. The purpose of this one is to discuss variable selection techniques to the Cox Proportional Hazard model. I wanted to note this one since this can help my partner and I when it comes to approaching a data set and identifying the most important predictors. This paper doesn't go into particular depth of a hazard model like the first one. However, it shows the mathematical reasoning to choose a predictor and the outcome of the model when using their approach. 
 
-### Application of Cox Proportional Hazards Model
+#### Application of Cox Proportional Hazards Model
 
 The first article I read was the Cox Proportional Hazards model used for predictive analysis of the energy consumption of healthcare buildings[@Ben-Assuli2023]. The goal of paper was to analyze and predict excessive energy consumption in healthcare buildings. The parameters that were studied was building construction, facilities, demographics and climate. The authors took these variables in order to see the what effects it has to energy overconsumption. The importance of the paper is to find ways for spending on energy as well as analyzing the key facts or consumption in healthcare buildings. The study was done on 64 healthcare buildings in Spain and used the Cox Proportional Hazards model to analyze. The model was adapted to predict energy overconsumption which I thought was interesting route to take for the study. The two variables that ended up being significant was demographic and facilities. I would like to note that this was only conducted in Spain’s region so the demographic column might not be a reliable factor. Also, this was a different approach in using Cox Proportional Hazard model. 
 
@@ -33,7 +33,7 @@ Utilizing shared frailty with the Cox proportional hazards regression: Post disc
 
 Equeter further discusses the model to predict tool lifespan in machining [@Equeter2020]. It focuses on predicting the Mean Up Time of cutting tool insets based on a single cutting parameter: cutting speed. They employed the model for the predication and did so by transforming the data. Although I was confused at the use of the Cox Proportional Hazard model, the authors thought it was a good fit for assessing tool lifespan and has been used in previous machining studies. The first step the author does is generate degradation paths using a gamma process. The gamma process is employed to generate a set of tool lifetimes. Another part that I was surprised in was the author used a logarithmic transformation of cutting speed in order to improve in prediction performance. In addition, the author uses a piecewise stochastic model for flank wear in order to see the effects at the beginning to the end of the tool life. This paper is helpful when looking at appropriate data for using the Cox Proportional Hazard model. I would like to revisit it when my partner and I want to pick a data set as it sets out important notes to consider such as data transformation, logarithmic transformation and size of the data.
 
-### Methods and Assumptions
+#### Methods and Assumptions
 
 This paper showed the method and the coding for the Cox Proportional Hazard[@Faruk2018]. The researchers used data from the 2012 Indonesian Demographic and Health Survey for the first birth interval. They compared the performance of the model to the three accelerated failure time models by Weibull, exponential and log-normal distributions. The data was assessed for violations of the assumption through log cumulative hazard plots and statistical tests. In the paper, one shortfall that I feel wasn't addressed was the results of the analysis of the data. It was discussed how they employed the log cumulative hazard plots and Goodness-Of-Fit test. The analysis identified significant covariates, including women's education level, husband's education level, contraceptive knowledge, access to mass media, wealth index, and employment status.
 
@@ -46,7 +46,7 @@ This article goes into depth on what the log-rank test is that I mentioned above
 
 The goal of this study is to see whether hazard ration, relative risk, and other estimates made by the Cox Proportional Hazards model are biased when the basic assumptions of the model are violated[@Abeysekera2009]. This is very important because whenever regression models are run, not just Cox Proportional Hazards models, many times we take for granted that the assumptions of the model are met. This can lead to incorrect conclusions and predictions. The Cox model assumes that the hazard ratios remain constant over time. If this is violated, then the model may falsely suggest that a variable is significant or vice versa. This study showed an example where the hazards ratio is not constant over time. An example was with the age of smokers and the RR as age increased. As there was an increase in cumulative smoking exposure, the RR decrease after 50. It was also addressed how in the Cox PH model, there is increased emphasis on the Relative Risk. This is convenient because it doesn't require estimating background information. They first examined survival curves by smoking status and then compared a simulated data set could define mortality to a real data set. They found that single minded focus on PH models have hindered the development of other models in epidemiologic data. Sometimes hazard functions, rather than the rate of hazard functions may be a better alternative. 
 
-The goal of this paper is very similar to the first study[@Kuitunen2021]. It investigates, in detail, the reporting of the model details as well as the model assumptions with total joint arthroplasty studies. Nearly 80% of the Cox proportional hazards were reported inadequately. However, it is still amongst the most used models. One of the solutions was to hire statisticians to review the process and make sure reproducible results are created. 
+The goal of this paper is very similar to the first study[@Kuitunen2021]. It investigates, in detail, the reporting of the model details as well as the model assumptions with total joint arthroplasty studies. Nearly 80% of the Cox proportional hazards were reported inadequately. However, it is still among the most used models. One of the solutions was to hire statisticians to review the process and make sure reproducible results are created. 
 
 This article tests the strength of proportional hazards in total joint arthroplasty studies[@Ponkilainene2021]. They found a total of 1154 studies by searching for "cox" AND "hazard" in the abstract. The abstract also had to meet the following criteria: the topic must be on 
 knee or hip joint arthroplasty, survival analysis was used, and a hazard ratio was reported. If those criteria were met, the entire article was read. Nearly 80% of the published TJA survival studies reported proportional hazard assumptions of the Cox regression model 
@@ -65,20 +65,12 @@ By analyzing how the various predictors influence the hazard rate over time, res
 
 Although the diversity with the Cox Proportional Hazard model is myriad, it still has its limitations. Not every data set is fit for the model and can present more issues when using the model to conduct research. For this paper, we have decided to explore a cancer data set provided by SEER (National Cancer Institute Surveillance, Epidemiology and End Results Program). We will be analyzing the variables such as site record, sex, age record, COD to site record, death classification, and ethnicity to see what influences the time until death. (Once report is complete should also dive into what we are trying to accomplish and study) 
 
-Note we will be using the Seer cancer dataset. Please look at the github uploaded documents to take a look at the dataset we have chosen. We are still looking at the variables to consider, but we have narrowed it down to the what's shown on the file as well as race and ethnicity. This data is provided by the National Cancer Institute Surveillance, Epidemiology and End Results Program (SEER).
+Here we will write a paragraph about the dataset itself and what we have found when using it. This will be a simple introduction that touches upon what we are trying to accomplish with the datast). 
 
 
 ## Methods
 
-The common non-parametric regression model is
-$Y_i = m(X_i) + \varepsilon_i$, where $Y_i$ can be defined as the sum of
-the regression function value $m(x)$ for $X_i$. Here $m(x)$ is unknown
-and $\varepsilon_i$ some errors. With the help of this definition, we
-can create the estimation for local averaging i.e. $m(x)$ can be
-estimated with the product of $Y_i$ average and $X_i$ is near to $x$. In
-other words, this means that we are discovering the line through the
-data points with the help of surrounding data points. The estimation
-formula is printed below [@R-base]:
+This is where we will write the method for Cox Proportional Dataset. 
 
 $$
 M_n(x) = \sum_{i=1}^{n} W_n (X_i) Y_i  \tag{1}
@@ -87,7 +79,7 @@ Weights are positive numbers and small if $X_i$ is far from $x$.
 
 ## Analysis and Results
 
-### Data and Vizualisation0
+### Data and Vizualisation
 
 The data we are using in this study is provided by the National Cancer Institute Surveillance, Epidemilogy, and End Results Program also known as SEER. It is a comprehensive cancer surveillance system in the United States. SEER collects and reports data related to cancer incidence, prevalence, survival and mortality. It covers a wide range of demographic, clinical, and tumor-related information for cancer research, prevention, and patience care, making it a valuable resource for understanding cancer trends, outcomes, and risk factors at a national level. This dataset will be used as the foundational dataset for my Cox Proportional Hazard models. 
 
