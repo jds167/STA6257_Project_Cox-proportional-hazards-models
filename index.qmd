@@ -191,6 +191,12 @@ styled_table %>%
 
 
 ```
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+### Patient Demographics
+=======
+>>>>>>> 7b24f25d65662a20f7762ac013df31f2d90bf131
 Below is the distribution of patient age using a histogram and density plot. We find that majority of the paitents are between the ages of 60-70.
 ```{r, warning=FALSE, echo=TRUE}
 histogram_plot <- ggplot(df, aes(x = Age)) +
@@ -284,9 +290,14 @@ bar_plot <- ggplot(df, aes(x = Cancer_Group)) +
 bar_plot
 ```
 
+<<<<<<< HEAD
+=======
+>>>>>>> b23f93692179750eaf2aa1c234b7f52cb159a97c
+>>>>>>> 7b24f25d65662a20f7762ac013df31f2d90bf131
 ```{r, warning=FALSE, echo=TRUE}
 
 ```
+<<<<<<< HEAD
 
 ```{r, warning=FALSE, echo=TRUE}
 
@@ -302,6 +313,10 @@ $$ $W_n(x)$ is the sum of weights that belongs to all real numbers.
 Weights are positive numbers and small if $X_i$ is far from $x$.
 
 ## Analysis and Results
+=======
+<<<<<<< HEAD
+### Patient Sex
+>>>>>>> 7b24f25d65662a20f7762ac013df31f2d90bf131
 ```{r}
 cox_model <- coxph(Surv(Survival.months, survived) ~ Cancer_Group + Race_Category + Sex + Age, data = df)
 summary(cox_model)
@@ -309,6 +324,33 @@ surv_fit <- survfit(cox_model, newdata = df, type = "aalen")
 
 ```
 
+<<<<<<< HEAD
+=======
+## Median Household Income
+```{r}
+ggplot(df, aes(x = Median_Household_Income, fill=Median_Household_Income)) +
+  geom_bar(color="white") +  
+  theme_economist(base_family="ITC Officina Sans") +
+  scale_fill_economist(labels=NULL)
+```
+=======
+
+```{r, warning=FALSE, echo=TRUE}
+
+```
+
+## Methods
+
+This is where we will write the method for Cox Proportional Dataset. 
+
+$$
+M_n(x) = \sum_{i=1}^{n} W_n (X_i) Y_i  \tag{1}
+$$ $W_n(x)$ is the sum of weights that belongs to all real numbers.
+Weights are positive numbers and small if $X_i$ is far from $x$.
+
+## Analysis and Results
+>>>>>>> b23f93692179750eaf2aa1c234b7f52cb159a97c
+>>>>>>> 7b24f25d65662a20f7762ac013df31f2d90bf131
 
 ### Statistical Modeling
 
