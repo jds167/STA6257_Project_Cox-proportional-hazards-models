@@ -349,12 +349,42 @@ $$ $W_n(x)$ is the sum of weights that belongs to all real numbers.
 Weights are positive numbers and small if $X_i$ is far from $x$.
 
 ## Analysis and Results
->>>>>>> b23f93692179750eaf2aa1c234b7f52cb159a97c
->>>>>>> 7b24f25d65662a20f7762ac013df31f2d90bf131
+```{r}
+filtered_data <- df %>%
+  filter(survived == 1) # we only want those that didn't survive 
+ filtered_data$status <- 1
+ filtered_data$Cancer_Group <- as.factor(filtered_data$Cancer_Group)
+filtered_data$Gender <- ifelse(filtered_data$Sex == "Female", 0, 1)
 
+
+
+cox_model <- coxph(Surv(Survival.months) ~  Gender + Cancer_Group, data = filtered_data)
+summary(cox_model)
+
+```
+
+The hazard ratio (exp(coef)) for "Gender" is 1.106. This means that males (coded as 1) have a 1.106 times higher risk of experiencing the event (in this case, death) compared to females (coded as 0).
+The p-value ("< 2e-16") for "Gender" is very low, indicating that the hazard ratio is statistically significant. This means that "Gender" (with females as the reference) is associated with a significant difference in survival, and that difference favors females.
 ### Statistical Modeling
+```{r}
+## not filtering on death only to see what is associated with higher risk of death compared to those that didn't die
+df$Gender <- ifelse(df$Sex == "Female", 0, 1)
+# Assuming you want "White" to be the reference category
+df$Race_Category <- as.factor(df$Race_Category)
+
+# Set "White" as the reference category
+df$Race_Category <- relevel(df$Race_Category, ref = "White")
+
+
+cox_model_2 <- coxph(Surv(Survival.months, survived) ~ Age + Gender + Race_Category, data = df)
+summary(cox_model_2)
+```
 
 ### Conclusion
-
+Race_CategoryAsian" has a hazard ratio of 0.8547, meaning that individuals in the Asian category have a 14.53% lower risk of death compared to individuals in the "White" category.
+"Race_CategoryBlack" has a hazard ratio of 1.3478, indicating that individuals in the Black category have a 34.78% higher risk of death compared to individuals in the "White" category.
+"Race_CategoryOther/Miscellaneous" has a hazard ratio of 0.8734, meaning that individuals in this category have a 12.66% lower risk of death compared to individuals in the "White" category.
+"Race_CategoryPacific Islander" has a hazard ratio of 1.0706, indicating that individuals in the Pacific Islander category have a 7.06% higher risk of death compared to individuals in the "White" category.
+Notably, "Race_CategoryOther/Miscellaneous" and "Race_CategoryPacific Islander" are not statistically significant predictors of the risk of death as their p-values are greater than 0.05.
 
 \[ \cite{Abeysekera2009}, \cite{Ben-Assuli2023}, \cite{Equeter2020}, \cite{Fan2002}, \cite{Gonzalez-Dominguez2022}, \cite{Faruk2018}, \cite{Deo2021}, \cite{Fox2023}, \cite{Bland2004}, \cite{Kuitunen2021}, \cite{Ponkilainene2021}, \cite{Vadeby2010} \]
