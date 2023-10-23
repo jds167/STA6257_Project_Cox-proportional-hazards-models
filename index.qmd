@@ -158,6 +158,15 @@ df <- df %>%
   )
 
 
+df <- df %>%
+  mutate(Income_Group = case_when(
+    Median_Household_Income <= 25000 ~ "0-25K",
+    Median_Household_Income <= 50000 ~ "25-50K",
+    Median_Household_Income <= 75000 ~ "50-75K",
+    Median_Household_Income <= 100000 ~ "75-100K",
+    TRUE ~ "100K+"
+  ))
+
 
 styled_table <- df %>%
   select(
@@ -215,9 +224,71 @@ styled_table %>%
 
 
 ```
+### Patient Demographics
 ```{r, warning=FALSE, echo=TRUE}
 
+
+ggplot(df, aes(x=Age))+ 
+  geom_histogram( color="#e9ecef", fill="#188bc2", alpha=0.9, position = 'identity') +
+  theme_economist(base_family="ITC Officina Sans")
+
+
+
 ```
+### Patient Sex
+```{r}
+patient_sex_viz <- df %>%
+  group_by(Sex) %>%
+  summarise(N = n()) %>%
+  mutate(
+    gender = as.factor(Sex),
+    pos = cumsum(N) - N/2,
+    label = paste(N,  " ", gender, "\npatients\n(", 100*round(N/sum(N), 2), "%)", sep="")
+  )
+ggplot(patient_sex_viz, aes(x = "", y = N, fill = Sex)) +
+  geom_bar(stat = "identity", width=1, color="white", position = "stack") +  
+  coord_polar(theta = "y", direction = -1, clip = "off") +
+  theme_economist(base_family="ITC Officina Sans") + 
+  theme(
+    legend.position="none",
+    line=element_blank(),
+    axis.title.x=element_blank(),
+    axis.text.x=element_blank(), #remove x axis labels
+    axis.ticks.x=element_blank(), #remove x axis ticks
+    axis.title.y=element_blank(),
+    axis.text.y=element_blank(),  #remove y axis labels
+    axis.ticks.y=element_blank()  #remove y axis ticks
+  ) + 
+  geom_text(aes(y = pos, label = label), color = "white", size=6) +
+  scale_fill_economist(labels=NULL)
+
+```
+## Survival
+```{r}
+ggplot(df, aes(x = survived, fill=survived)) +
+  geom_bar(color="white") +  
+  theme_economist(base_family="ITC Officina Sans") +
+  scale_fill_economist(labels=NULL)
+```
+## Cancer Type of those that passed 
+```{r}
+filtered_data <- df %>%
+  filter(survived == "Dead")
+ggplot(filtered_data, aes(x = Cancer_Group, fill=Cancer_Group)) +
+  geom_bar(color="white") +  
+  theme_economist(base_family="ITC Officina Sans") +
+  scale_fill_economist(labels=NULL)
+
+```
+
+## Median Household Income
+```{r}
+ggplot(df, aes(x = Median_Household_Income, fill=Median_Household_Income)) +
+  geom_bar(color="white") +  
+  theme_economist(base_family="ITC Officina Sans") +
+  scale_fill_economist(labels=NULL)
+```
+
 ### Statistical Modeling
 
 ### Conlusion
