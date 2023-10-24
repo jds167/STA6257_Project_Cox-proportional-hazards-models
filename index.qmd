@@ -291,19 +291,20 @@ bar_plot <- ggplot(df, aes(x = Cancer_Group)) +
 bar_plot
 ```
 
+Below is the Median Household Income. 
+```{r, warning=FALSE, echo=TRUE}
+ggplot(df, aes(x = Median_Household_Income, fill=Median_Household_Income)) +
+  geom_bar(color="white") +  
+  theme_economist(base_family="ITC Officina Sans") +
+  scale_fill_economist(labels=NULL) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
 ### Patient Sex
 ```{r, warning=FALSE, echo=TRUE}
 cox_model <- coxph(Surv(Survival.months, survived) ~ Cancer_Group + Race_Category + Sex + Age, data = df)
 summary(cox_model)
 surv_fit <- survfit(cox_model, newdata = df, type = "aalen")
-```
-
-## Median Household Income
-```{r, warning=FALSE, echo=TRUE}
-ggplot(df, aes(x = Median_Household_Income, fill=Median_Household_Income)) +
-  geom_bar(color="white") +  
-  theme_economist(base_family="ITC Officina Sans") +
-  scale_fill_economist(labels=NULL)
 ```
 
 ## Methods
