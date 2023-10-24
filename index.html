@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Halley Deleeuw and Jasmine Sawh">
-<meta name="dcterms.date" content="2023-10-23">
+<meta name="dcterms.date" content="2023-10-24">
 
 <title>Cox Proportional Hazards Model</title>
 <style>
@@ -3297,7 +3297,7 @@ border: 0;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 23, 2023</p>
+      <p class="date">October 24, 2023</p>
     </div>
   </div>
   
@@ -3456,7 +3456,7 @@ border: 0;
 </details>
 <div class="cell-output-display">
 
-<div id="fxufqlwynr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="qysvlhioxk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
   
   <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false" style="-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-family: system-ui, &#39;Segoe UI&#39;, Roboto, Helvetica, Arial, sans-serif, &#39;Apple Color Emoji&#39;, &#39;Segoe UI Emoji&#39;, &#39;Segoe UI Symbol&#39;, &#39;Noto Color Emoji&#39;; display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #333333; font-size: 16px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: auto; border-top-style: solid; border-top-width: 2px; border-top-color: #A8A8A8; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #A8A8A8; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3;" bgcolor="#FFFFFF">
   <thead style="border-style: none;">
@@ -4135,10 +4135,13 @@ Score (logrank) test = 379106  on 11 df,   p=&lt;2e-16</code></pre>
 </section>
 <section id="methods" class="level2">
 <h2 class="anchored" data-anchor-id="methods">Methods</h2>
-<p>This is where we will write the method for Cox Proportional Dataset.</p>
+<p>The Cox Proportional Hazard Model is a widely used semiparametric survival analysis method that provides a flexible framework for modeling the hazard rate in the presence of right-censored data. Right-censored data is a type of data where the event of interest like death or failure has not occurred for some of the subjects int he study by the end of observation period. Thus, the exact event time is unknown or not observed for these subjects. In this model, the hazard rate at any time point is expressed as the product of a baseline hazard function, denoted as λ0(t) and an exponential function of a linear combination of covariates.</p>
+<p>Mathematically, the Cox model can be defined as:</p>
 <p><span class="math display">\[
-M_n(x) = \sum_{i=1}^{n} W_n (X_i) Y_i  \tag{1}
-\]</span> <span class="math inline">\(W_n(x)\)</span> is the sum of weights that belongs to all real numbers. Weights are positive numbers and small if <span class="math inline">\(X_i\)</span> is far from <span class="math inline">\(x\)</span>.</p>
+λ(t) = λ0(t) * exp(β₁X₁ + β₂X₂ + ... + βₖXₖ)
+\]</span> This is where: <span class="math inline">\(λ(t)\)</span> represents the hazard rate at time t. <span class="math inline">\(λ0(t)\)</span> is the baseline hazard function, representing the hazard in the absence of covariates. <span class="math inline">\(β₁, β₂, ..., βₖ\)</span> are coefficients associated with covariates$ X₁, X₂, …, Xₖ,$ respectively.</p>
+<p>The model assumes that the effect of the covariates on the hazard rate is proportional over time thus the name ‘proportional hazards’. The hazard ratio between two individuals remains constant over time if one individual’s covariate values are a constant factor of the other’s.</p>
+<p>The key advantage of the Cox model is that it doesn’t make specific assumptions about the shape of the hazard function. This makes it useful for various applications as seen in the introduction. It relies on partial likelihood estimation to estimate the coefficients <span class="math inline">\(β₁, β₂, ..., βₖ\)</span>.It is important to verify the proportional hazards assumption, consider potential confounders, and address issues such as censoring and collinearity in the data.</p>
 </section>
 <section id="analysis-and-results" class="level2">
 <h2 class="anchored" data-anchor-id="analysis-and-results">Analysis and Results</h2>
