@@ -88,6 +88,7 @@ library(kableExtra)
 library(ggplot2)
 library(gridExtra)
 library(scales)
+library(ggplot2)
 ```
 
 ```{r, warning=FALSE, echo=TRUE}
@@ -297,7 +298,7 @@ ggplot(df, aes(x = Median_Household_Income, fill=Median_Household_Income)) +
   geom_bar(color="white") +  
   theme_economist(base_family="ITC Officina Sans") +
   scale_fill_economist(labels=NULL) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust=1))
 ```
 
 ### Patient Sex
@@ -319,11 +320,11 @@ $$
 This is where: 
 $λ(t)$ represents the hazard rate at time t.
 $λ0(t)$ is the baseline hazard function, representing the hazard in the absence of covariates.
-$β₁, β₂, ..., βₖ$ are coefficients associated with covariates$ X₁, X₂, ..., Xₖ,$ respectively.
+$β₁, β₂, ..., βₖ$ are coefficients associated with covariates$X₁, X₂, ..., Xₖ,$ respectively.
 
 The model assumes that the effect of the covariates on the hazard rate is proportional over time thus the name 'proportional hazards'. The hazard ratio between two individuals remains constant over time if one individual's covariate values are a constant factor of the other's. In addition, the model assumes that the likelihood of being censored is not related to the unobserved event times. If censoring is informative, it can lead to bias in the model. The Cox Proportional Hazard model assumes that there are no interactions between covariates. 
 
-The key advantage of the Cox model is that it doesn't make specific assumptions about the shape of the hazard function. This makes it useful for various applications as seen in the introduction. It relies on partial likelihood estimation to estimate the coefficients $β₁, β₂, ..., βₖ. Another limitation to be cautious of is that the model assumes that log hazard is linear in covariates. When this assumption is not met, it can cause the model to not fit the data well. Thus, it's important to transform variables. It is important to verify the proportional hazards assumption, consider potential confounders, and address issues such as censoring and collinearity in the data. 
+The key advantage of the Cox model is that it doesn't make specific assumptions about the shape of the hazard function. This makes it useful for various applications as seen in the introduction. It relies on partial likelihood estimation to estimate the coefficients $β₁, β₂, ..., βₖ$. Another limitation to be cautious of is that the model assumes that log hazard is linear in covariates. When this assumption is not met, it can cause the model to not fit the data well. Thus, it's important to transform variables. It is important to verify the proportional hazards assumption, consider potential confounders, and address issues such as censoring and collinearity in the data. 
 
 
 ## Analysis and Results
