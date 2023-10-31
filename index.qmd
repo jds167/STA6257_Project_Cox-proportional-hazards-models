@@ -367,6 +367,6 @@ Race_CategoryOther/Miscellaneous has a hazard ratio of 0.8734, meaning that indi
 Race_CategoryPacific Islander has a hazard ratio of 1.0706, indicating that individuals in the Pacific Islander category have a 7.06% higher risk of death compared to individuals in the "White" category.
 Notably, Race_CategoryOther/Miscellaneous and Race_CategoryPacific Islander are not statistically significant predictors of the risk of death as their p-values are greater than 0.05
 
-##References 
+
 
 \[ \cite{Abeysekera2009}, \cite{Ben-Assuli2023}, \cite{Equeter2020}, \cite{Fan2002}, \cite{Gonzalez-Dominguez2022}, \cite{Faruk2018}, \cite{Deo2021}, \cite{Fox2023}, \cite{Bland2004}, \cite{Kuitunen2021}, \cite{Ponkilainene2021}, \cite{Vadeby2010} \]
