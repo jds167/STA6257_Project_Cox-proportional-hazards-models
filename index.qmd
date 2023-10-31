@@ -66,6 +66,28 @@ Although the diversity with the Cox Proportional Hazard model is myriad, it stil
 
 In the subsequent sections, we will delve deeper into the intricacies of the data set and the methodology employed in our analysis, further illuminating the applications and implications of the Cox Proportional Hazard model in the context of our research.
 
+## Methods
+
+The Cox Proportional Hazard Model is a widely used semiparametric survival analysis method that provides a flexible framework for modeling the hazard rate in the presence of right-censored data. Right-censored data is a type of data where the event of interest like death or failure has not occurred for some of the subjects int he study by the end of observation period. Thus, the exact event time is unknown or not observed for these subjects. In this model, the hazard rate at any time point is expressed as the product of a baseline hazard function, denoted as λ0(t) and an exponential function of a linear combination of covariates. 
+
+Mathematically, the Cox model can be defined as: 
+
+$$
+λ(t) = λ0(t) * exp(β₁X₁ + β₂X₂ + ... + βₖXₖ)
+$$ 
+This is where: 
+$λ(t)$ represents the hazard rate at time t.
+$λ0(t)$ is the baseline hazard function, representing the hazard in the absence of covariates.
+$β₁, β₂, ..., βₖ$ are coefficients associated with covariates$X₁, X₂, ..., Xₖ,$ respectively.
+
+#### Assumptions 
+
+Proportional Hazards Assumption -  This assumption of the Cox model states that the effect of covariates on the hazard rate remains constant and is not time-dependent. The hazard ratio between two individuals should stay consistent over time if one individual's covariate values are a constant factor of the other's.
+
+Independence of Censoring - The model assumes that the censoring process (the event of not observing the outcome) is independent of the event of interest. Hence, censoring process is not related to the underlying risk of the event. 
+
+Linearity of Continuous Variables - The model assumes that the log-hazard is a linear function of the covariates for continuous variables. A unit change in the covariate leads to a constant multiplicative change in the hazard rate. 
+
 ### Data and Vizualisation
 
 The data we are using in this study is provided by the National Cancer Institute Surveillance, Epidemiology, and End Results Program also known as SEER. It is a comprehensive cancer surveillance system in the United States. SEER collects and reports data related to cancer incidence, prevalence, survival and mortality. It covers a wide range of demographic, clinical, and tumor-related information for cancer research, prevention, and patience care, making it a valuable resource for understanding cancer trends, outcomes, and risk factors at a national level. This data set will be used as the foundation data set for my Cox Proportional Hazard models. 
@@ -301,33 +323,14 @@ ggplot(df, aes(x = Median_Household_Income, fill=Median_Household_Income)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust=1))
 ```
 
-### Patient Sex
+## Analysis and Results
 ```{r, warning=FALSE, echo=TRUE}
 cox_model <- coxph(Surv(Survival.months, survived) ~ Cancer_Group + Race_Category + Sex + Age, data = df)
 summary(cox_model)
 surv_fit <- survfit(cox_model, newdata = df, type = "aalen")
 ```
+The model's coefficient estimates and hazard ratios demonstrate the magnitude and direction of the influence of each covariate on survival. When we look at the Cancer group, the Cox model indicated that the type of cancer a person  had was critical determinate of survival. Based on our results, colorectal and lung cancer were associated with hazard ratios close to .69. When examining the race category there was also substantial effect on survival. For the category under Black and Pacific Islander, the hazard ratios were approximately 1.36 and 1.19, respectively. This indicates an elevated risk of experiencing the event. For the sex category, we found that males face a 2.33 times higher risk of experiencing the event compared to females. For age, there was a 1.03 hazard ration, implying that there was a 3% increase in the hazard for each one-year increment in age. In the above mode, we found the factors that affect survival in the dataset. 
 
-## Methods
-
-The Cox Proportional Hazard Model is a widely used semiparametric survival analysis method that provides a flexible framework for modeling the hazard rate in the presence of right-censored data. Right-censored data is a type of data where the event of interest like death or failure has not occurred for some of the subjects int he study by the end of observation period. Thus, the exact event time is unknown or not observed for these subjects. In this model, the hazard rate at any time point is expressed as the product of a baseline hazard function, denoted as λ0(t) and an exponential function of a linear combination of covariates. 
-
-Mathematically, the Cox model can be defined as: 
-
-$$
-λ(t) = λ0(t) * exp(β₁X₁ + β₂X₂ + ... + βₖXₖ)
-$$ 
-This is where: 
-$λ(t)$ represents the hazard rate at time t.
-$λ0(t)$ is the baseline hazard function, representing the hazard in the absence of covariates.
-$β₁, β₂, ..., βₖ$ are coefficients associated with covariates$X₁, X₂, ..., Xₖ,$ respectively.
-
-The model assumes that the effect of the covariates on the hazard rate is proportional over time thus the name 'proportional hazards'. The hazard ratio between two individuals remains constant over time if one individual's covariate values are a constant factor of the other's. In addition, the model assumes that the likelihood of being censored is not related to the unobserved event times. If censoring is informative, it can lead to bias in the model. The Cox Proportional Hazard model assumes that there are no interactions between covariates. 
-
-The key advantage of the Cox model is that it doesn't make specific assumptions about the shape of the hazard function. This makes it useful for various applications as seen in the introduction. It relies on partial likelihood estimation to estimate the coefficients $β₁, β₂, ..., βₖ$. Another limitation to be cautious of is that the model assumes that log hazard is linear in covariates. When this assumption is not met, it can cause the model to not fit the data well. Thus, it's important to transform variables. It is important to verify the proportional hazards assumption, consider potential confounders, and address issues such as censoring and collinearity in the data. 
-
-
-## Analysis and Results
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- df %>%
   filter(survived == 1) # we only want those that didn't survive 
@@ -340,10 +343,8 @@ summary(cox_model)
 
 ```
 
-The hazard ratio (exp(coef)) for "Gender" is 1.106. This means that males (coded as 1) have a 1.106 times higher risk of experiencing the event (in this case, death) compared to females (coded as 0).
-The p-value ("< 2e-16") for "Gender" is very low, indicating that the hazard ratio is statistically significant. This means that "Gender" (with females as the reference) is associated with a significant difference in survival, and that difference favors females.
+The code above focuses on performing Cox Proportional Hazard model on individuals who did not survive. This allows for more targeted examination of factors and investigate the impact of gender, and cancer type on their survival. The hazard ratio, which is the (exp(coef)) for gender is 1.106. This means that males (coded as 1) have a 1.106 times higher risk of experiencing the event, in this case death, compare to females (coded as 0). The p-value ("< 2e-16") for Gender is very low, indicating that the hazard ratio is statistically significant. This means that "Gender" (with females as the reference) is associated with a significant difference in survival, and that difference favors females. In the Cancer_group category, Pancreatic Cancer has the highest hazard ratio among the cancer groups with approximately 1.919 . This represents an increase in the risk of the event at 91.9% increase. Thus, individuals with pancreatic cancer are at a significantly higher risk of non-survival. In addition, all Cancer_groups except for Prostate Cancer has a statistically significant impact on survival, which is seen in the p-value ("<2e16"). This implies that the differences in survival associated with these cancer types are unlikely to have occurred by chance. 
 
-### Statistical Modeling
 
 ```{r, warning=FALSE, echo=TRUE}
 ## not filtering on death only to see what is associated with higher risk of death compared to those that didn't die
@@ -359,11 +360,11 @@ cox_model_2 <- coxph(Surv(Survival.months, survived) ~ Age + Gender + Race_Categ
 summary(cox_model_2)
 ```
 
-### Conclusion
-"Race_CategoryAsian" has a hazard ratio of 0.8547, meaning that individuals in the Asian category have a 14.53% lower risk of death compared to individuals in the "White" category.
-"Race_CategoryBlack" has a hazard ratio of 1.3478, indicating that individuals in the Black category have a 34.78% higher risk of death compared to individuals in the "White" category.
-"Race_CategoryOther/Miscellaneous" has a hazard ratio of 0.8734, meaning that individuals in this category have a 12.66% lower risk of death compared to individuals in the "White" category.
-"Race_CategoryPacific Islander" has a hazard ratio of 1.0706, indicating that individuals in the Pacific Islander category have a 7.06% higher risk of death compared to individuals in the "White" category.
-Notably, "Race_CategoryOther/Miscellaneous" and "Race_CategoryPacific Islander" are not statistically significant predictors of the risk of death as their p-values are greater than 0.05
+The purpose of the code above is to examine the factors associated with a higher risk of death compared to individuals who did not die. We used the Race category White as a reference category. 
+Race_CategoryAsian has a hazard ratio of 0.8547, meaning that individuals in the Asian category have a 14.53% lower risk of death compared to individuals in the "White" category.
+Race_CategoryBlack has a hazard ratio of 1.3478, indicating that individuals in the Black category have a 34.78% higher risk of death compared to individuals in the "White" category.
+Race_CategoryOther/Miscellaneous has a hazard ratio of 0.8734, meaning that individuals in this category have a 12.66% lower risk of death compared to individuals in the "White" category.
+Race_CategoryPacific Islander has a hazard ratio of 1.0706, indicating that individuals in the Pacific Islander category have a 7.06% higher risk of death compared to individuals in the "White" category.
+Notably, Race_CategoryOther/Miscellaneous and Race_CategoryPacific Islander are not statistically significant predictors of the risk of death as their p-values are greater than 0.05
 
 \[ \cite{Abeysekera2009}, \cite{Ben-Assuli2023}, \cite{Equeter2020}, \cite{Fan2002}, \cite{Gonzalez-Dominguez2022}, \cite{Faruk2018}, \cite{Deo2021}, \cite{Fox2023}, \cite{Bland2004}, \cite{Kuitunen2021}, \cite{Ponkilainene2021}, \cite{Vadeby2010} \]
