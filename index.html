@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Halley Deleeuw and Jasmine Sawh">
-<meta name="dcterms.date" content="2023-10-31">
+<meta name="dcterms.date" content="2023-11-07">
 
 <title>Cox Proportional Hazards Model</title>
 <style>
@@ -3297,7 +3297,7 @@ border: 0;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 31, 2023</p>
+      <p class="date">November 7, 2023</p>
     </div>
   </div>
   
@@ -3471,7 +3471,7 @@ border: 0;
 </details>
 <div class="cell-output-display">
 
-<div id="byeszztgkc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="qlzwdfnate" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
   
   <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false" style="-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-family: system-ui, &#39;Segoe UI&#39;, Roboto, Helvetica, Arial, sans-serif, &#39;Apple Color Emoji&#39;, &#39;Segoe UI Emoji&#39;, &#39;Segoe UI Symbol&#39;, &#39;Noto Color Emoji&#39;; display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #333333; font-size: 16px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: auto; border-top-style: solid; border-top-width: 2px; border-top-color: #A8A8A8; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #A8A8A8; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3;" bgcolor="#FFFFFF">
   <thead style="border-style: none;">
@@ -4146,7 +4146,7 @@ Score (logrank) test = 379106  on 11 df,   p=&lt;2e-16</code></pre>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>surv_fit <span class="ot">&lt;-</span> <span class="fu">survfit</span>(cox_model, <span class="at">newdata =</span> df, <span class="at">type =</span> <span class="st">&quot;aalen&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>The model’s coefficient estimates and hazard ratios demonstrate the magnitude and direction of the influence of each covariate on survival. When we look at the Cancer group, the Cox model indicated that the type of cancer a person had was critical determinate of survival. Based on our results, colorectal and lung cancer were associated with hazard ratios close to .69. When examining the race category there was also substantial effect on survival. For the category under Black and Pacific Islander, the hazard ratios were approximately 1.36 and 1.19, respectively. This indicates an elevated risk of experiencing the event. For the sex category, we found that males face a 2.33 times higher risk of experiencing the event compared to females. For age, there was a 1.03 hazard ration, implying that there was a 3% increase in the hazard for each one-year increment in age. In the above mode, we found the factors that affect survival in the dataset.</p>
+<p>The model’s coefficient estimates and hazard ratios demonstrate the magnitude and direction of the influence of each covariate on survival. When we look at the Cancer group, the Cox model indicated that the type of cancer a person had was critical determinate of survival. Based on our results, colorectal and lung cancer were associated with hazard ratios close to .69. When examining the race category there was also substantial effect on survival. For the category under Black and Pacific Islander, the hazard ratios were approximately 1.36 and 1.19, respectively. This indicates an elevated risk of experiencing the event. For the sex category, we found that males face a 2.33 times higher risk of experiencing the event compared to females. For age, there was a 1.03 hazard ration, implying that there was a 3% increase in the hazard for each one-year increment in age. In the above mode, we found the factors that affect survival in the data set.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
