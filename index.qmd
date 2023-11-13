@@ -329,6 +329,7 @@ cox_model <- coxph(Surv(Survival.months, survived) ~ Cancer_Group + Race_Categor
 summary(cox_model)
 surv_fit <- survfit(cox_model, newdata = df, type = "aalen")
 ```
+<<<<<<< HEAD
 Below is a distribution of those who were diagnosed and are still alive. We can see that many with breast cancer are still alive, as well as kidney and thyroid cancer. 
 
 ```{r, warning=FALSE, echo=TRUE}
@@ -352,6 +353,9 @@ bar_plot2
 
 
 The model's coefficient estimates and hazard ratios demonstrate the magnitude and direction of the influence of each covariate on survival. When we look at the Cancer group, the Cox model indicated that the type of cancer a person  had was critical determinate of survival. Based on our results, colorectal and lung cancer were associated with hazard ratios close to .69. When examining the race category there was also substantial effect on survival. For the category under Black and Pacific Islander, the hazard ratios were approximately 1.36 and 1.19, respectively. This indicates an elevated risk of experiencing the event. For the sex category, we found that males face a 2.33 times higher risk of experiencing the event compared to females. For age, there was a 1.03 hazard ration, implying that there was a 3% increase in the hazard for each one-year increment in age. In the above mode, we found the factors that affect survival in the dataset. 
+=======
+The model's coefficient estimates and hazard ratios demonstrate the magnitude and direction of the influence of each covariate on survival. When we look at the Cancer group, the Cox model indicated that the type of cancer a person  had was critical determinate of survival. Based on our results, colorectal and lung cancer were associated with hazard ratios close to .69. When examining the race category there was also substantial effect on survival. For the category under Black and Pacific Islander, the hazard ratios were approximately 1.36 and 1.19, respectively. This indicates an elevated risk of experiencing the event. For the sex category, we found that males face a 2.33 times higher risk of experiencing the event compared to females. For age, there was a 1.03 hazard ration, implying that there was a 3% increase in the hazard for each one-year increment in age. In the above mode, we found the factors that affect survival in the data set. 
+>>>>>>> ca080dab1187e8b83655b69d24e10fd831b4cc27
 
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- df %>%
