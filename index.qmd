@@ -88,7 +88,9 @@ Independence of Censoring - The model assumes that the censoring process (the ev
 
 Linearity of Continuous Variables - The model assumes that the log-hazard is a linear function of the covariates for continuous variables. A unit change in the covariate leads to a constant multiplicative change in the hazard rate. 
 
-### Data and Vizualisation
+## Analysis and Results
+
+### Data Description
 
 The data we are using in this study is provided by the National Cancer Institute Surveillance, Epidemiology, and End Results Program also known as SEER. It is a comprehensive cancer surveillance system in the United States. SEER collects and reports data related to cancer incidence, prevalence, survival and mortality. It covers a wide range of demographic, clinical, and tumor-related information for cancer research, prevention, and patience care, making it a valuable resource for understanding cancer trends, outcomes, and risk factors at a national level. This data set will be used as the foundation data set for my Cox Proportional Hazard models. 
 
@@ -318,18 +320,19 @@ Below is the Median Household Income.
 ```{r, warning=FALSE, echo=TRUE}
 ggplot(df, aes(x = Median_Household_Income, fill=Median_Household_Income)) +
   geom_bar(color="white") +  
-  theme_economist(base_family="ITC Officina Sans") +
+  theme_minimal(base_family="ITC Officina Sans") +
   scale_fill_economist(labels=NULL) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust=1))
 ```
 
-## Analysis and Results
+## Statistical Modeling
+
+In the below, we will use Cox Proportional Model to perform survival analysis. Coxph is a function from the survival package in R. (In this part we will include a synopsis of what we are trying to achieve in the model)
 ```{r, warning=FALSE, echo=TRUE}
 cox_model <- coxph(Surv(Survival.months, survived) ~ Cancer_Group + Race_Category + Sex + Age, data = df)
 summary(cox_model)
 surv_fit <- survfit(cox_model, newdata = df, type = "aalen")
 ```
-<<<<<<< HEAD
 Below is a distribution of those who were diagnosed and are still alive. We can see that many with breast cancer are still alive, as well as kidney and thyroid cancer. 
 
 ```{r, warning=FALSE, echo=TRUE}
@@ -351,11 +354,7 @@ bar_plot2
 
 ```
 
-
-The model's coefficient estimates and hazard ratios demonstrate the magnitude and direction of the influence of each covariate on survival. When we look at the Cancer group, the Cox model indicated that the type of cancer a person  had was critical determinate of survival. Based on our results, colorectal and lung cancer were associated with hazard ratios close to .69. When examining the race category there was also substantial effect on survival. For the category under Black and Pacific Islander, the hazard ratios were approximately 1.36 and 1.19, respectively. This indicates an elevated risk of experiencing the event. For the sex category, we found that males face a 2.33 times higher risk of experiencing the event compared to females. For age, there was a 1.03 hazard ration, implying that there was a 3% increase in the hazard for each one-year increment in age. In the above mode, we found the factors that affect survival in the dataset. 
-=======
 The model's coefficient estimates and hazard ratios demonstrate the magnitude and direction of the influence of each covariate on survival. When we look at the Cancer group, the Cox model indicated that the type of cancer a person  had was critical determinate of survival. Based on our results, colorectal and lung cancer were associated with hazard ratios close to .69. When examining the race category there was also substantial effect on survival. For the category under Black and Pacific Islander, the hazard ratios were approximately 1.36 and 1.19, respectively. This indicates an elevated risk of experiencing the event. For the sex category, we found that males face a 2.33 times higher risk of experiencing the event compared to females. For age, there was a 1.03 hazard ration, implying that there was a 3% increase in the hazard for each one-year increment in age. In the above mode, we found the factors that affect survival in the data set. 
->>>>>>> ca080dab1187e8b83655b69d24e10fd831b4cc27
 
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- df %>%
