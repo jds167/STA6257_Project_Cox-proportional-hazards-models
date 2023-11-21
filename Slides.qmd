@@ -3,9 +3,7 @@ title: "Cox Proportional Hazards Model"
 output: html_document
 author: "Halley Deleeuw and Jasmine Sawh"
 date: '`r Sys.Date()`'
-format:
-  html:
-    code-fold: true
+format: revealjs
 course: STA 6257 - Advanced Statistical Modeling
 bibliography: references.bib # file contains bibtex for references
 #always_allow_html: true # this allows to get PDF with HTML features
@@ -17,8 +15,6 @@ editor:
   markdown: 
     wrap: 72
 ---
-
-[Link to Slides](Slides.html)
 ## Literature Review 
 
 #### Introduction to Cox Proportional Hazards Model 
