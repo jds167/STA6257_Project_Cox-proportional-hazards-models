@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Halley Deleeuw and Jasmine Sawh">
-<meta name="dcterms.date" content="2023-11-20">
+<meta name="dcterms.date" content="2023-11-28">
 
 <title>Cox Proportional Hazards Model</title>
 <style>
@@ -3297,7 +3297,7 @@ border: 0;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 20, 2023</p>
+      <p class="date">November 28, 2023</p>
     </div>
   </div>
   
@@ -3474,7 +3474,7 @@ border: 0;
 </details>
 <div class="cell-output-display">
 
-<div id="fogzbhkydx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="zdmrnkpuja" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
   
   <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false" style="-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-family: system-ui, &#39;Segoe UI&#39;, Roboto, Helvetica, Arial, sans-serif, &#39;Apple Color Emoji&#39;, &#39;Segoe UI Emoji&#39;, &#39;Segoe UI Symbol&#39;, &#39;Noto Color Emoji&#39;; display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #333333; font-size: 16px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: auto; border-top-style: solid; border-top-width: 2px; border-top-color: #A8A8A8; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #A8A8A8; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3;" bgcolor="#FFFFFF">
   <thead style="border-style: none;">
@@ -4229,7 +4229,9 @@ border: 0;
 
 </div>
 </div>
-<p>The model’s coefficient estimates and hazard ratios demonstrate the magnitude and direction of the influence of each covariate on survival. When we look at the Cancer group, the Cox model indicated that the type of cancer a person had was critical determinate of survival. Based on our results, colorectal and lung cancer were associated with hazard ratios close to .69. When examining the race category there was also substantial effect on survival. For the category under Black and Pacific Islander, the hazard ratios were approximately 1.36 and 1.19, respectively. This indicates an elevated risk of experiencing the event. For the sex category, we found that males face a 2.33 times higher risk of experiencing the event compared to females. For age, there was a 1.03 hazard ration, implying that there was a 3% increase in the hazard for each one-year increment in age. In the above mode, we found the factors that affect survival in the data set.</p>
+<p>The model’s coefficient estimates and hazard ratios demonstrate the magnitude and direction of the influence of each covariate on survival. Breast Cancer displays a hazard ratio of approximately 15.32, indicating individuals with breast cancer face around 15.32 times higher risk of death compared to those with “Other” cancer types, holding other variables constant. Similarly, Pancreatic Cancer exhibits a hazard ratio of 14.17, signifying a notably elevated risk of mortality. Within race categories, Asian and Other/Miscellaneous designations showcase hazard ratios slightly below 1, suggesting marginally lower hazards (or risks) of death compared to the reference group (White). Conversely, Black and Pacific Islander categories demonstrate hazard ratios slightly above 1, implying slightly elevated hazards (or risks) of death compared to the White individuals. Males exhibit a hazard ratio of approximately 2.33, indicating a 2.33 times higher risk of death compared to females, when other variables are held constant. Each one-unit increase in age corresponds to a 3% increase in the hazard (or risk) of death, holding other factors constant.</p>
+<p>Below we check if the proportional hazards assumption holds true for each factor in the Cox model. This assumption is extremely important in survival analysis because it suggests that the influence of factors stays the same over time. The proportional hazards assumption implies that the effect of a variable (like gender, age) on the hazard (or risk) of an event (such as death) remains constant or proportional over different durations or time periods.</p>
+<p>For example, if comparing two groups (e.g., males vs. females), the proportional hazards assumption suggests that the ratio of their risks of experiencing the event (like death) remains the same throughout the observation period. This implies that the effect of being male (compared to being female) on the risk of the event doesn’t change over time.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -4254,6 +4256,7 @@ Age             439.41  1 &lt; 2e-16
 GLOBAL        12223.52 11 &lt; 2e-16</code></pre>
 </div>
 </div>
+<p>All factors, except for age, have an extremely small p-value suggesting that there is a violation of the proportional hazards assumption for all of these variables, including Sex but to a lesser extent. This suggests that the effects of these variables on survival might change over time, which could impact the accuracy of the Cox proportional hazards model’s predictions.</p>
 <p>In the model below, we took our data and filtered on deceased patients. Similar to above, we used deceased as the response variable and cancer group and gender as our predictive variable. The table below shows the results of our model.</p>
 <div class="cell">
 <details>
