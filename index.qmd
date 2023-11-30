@@ -200,7 +200,7 @@ html_table <- styled_table %>%
   as_gt() %>%
   gt::as_raw_html()
 # Save the HTML table to a file
-writeLines(html_table, "styled_table.html")
+writeLines(html_table, "styled_table.html", useBytes= TRUE)
 
 styled_table %>%
   as_gt() %>%
@@ -396,14 +396,43 @@ Below we check if the proportional hazards assumption holds true for each factor
 
 For example, if comparing two groups (e.g., males vs. females), the proportional hazards assumption suggests that the ratio of their risks of experiencing the event (like death) remains the same throughout the observation period. This implies that the effect of being male (compared to being female) on the risk of the event doesn't change over time.
 
+
 ```{r, warning=FALSE, echo=TRUE}
 cox_residuals <- residuals(cox_model, type = "martingale")
 summary(cox_residuals)
-cox.zph_result <- cox.zph(cox_model)
-cox.zph_result
-```
-All factors, except for age, have an extremely small p-value suggesting that there is a violation of the proportional hazards assumption for all of these variables, including Sex but to a lesser extent. This suggests that the effects of these variables on survival might change over time, which could impact the accuracy of the Cox proportional hazards model's predictions. 
+qqnorm(cox_residuals)
+qqline(cox_residuals)
 
+cox.zph_result <- cox.zph(cox_model)
+print(cox.zph_result)
+plot(cox.zph_result)
+```
+All factors, except for sex, have an extremely small p-value suggesting that there is a violation of the proportional hazards assumption for all of these variables, including Sex but to a lesser extent. This suggests that the effects of these variables on survival might change over time, which could impact the accuracy of the Cox proportional hazards model's predictions. 
+
+
+Stratified Analysis 
+```{r, warning=FALSE, echo=TRUE}
+cox_model_stratified <- coxph(Surv(Survival.months, survived) ~ Race_Category + Sex + Age + strata(Cancer_Group), data = df)
+
+cox_summary_stratified <- summary(cox_model_stratified)
+table_data_stratified <- cox_summary_stratified$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
+kable(table_data_stratified, 
+      caption = "Stratified Cox Proportional Hazard Model Results",
+      format = "html", 
+      align = "c", 
+      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+We will write explanation here:
+
+```{r, warning=FALSE, echo=TRUE}
+cox_stratified_residuals <- residuals(cox_model_stratified, type = "martingale")
+summary(cox_stratified_residuals)
+
+cox.zph_result_stratified <- cox.zph(cox_model_stratified)
+print(cox.zph_result_stratified)
+plot(cox.zph_result_stratified)
+```
 
 In the model below, we took our data and filtered on deceased patients. Similar to above, we used deceased as the response variable and cancer group and gender as our predictive variable. The table below shows the results of our model. 
 ```{r, warning=FALSE, echo=TRUE}
@@ -430,6 +459,7 @@ cox_residuals2 <- residuals(cox_model2, type = "martingale")
 summary(cox_residuals2)
 cox.zph_result2 <- cox.zph(cox_model2)
 cox.zph_result2
+plot(cox.zph_result2)
 ```
 
 
@@ -470,6 +500,7 @@ cox_residuals3 <- residuals(cox_model3, type = "martingale")
 summary(cox_residuals3)
 cox.zph_result3 <- cox.zph(cox_model3)
 cox.zph_result3
+plot(cox.zph_result3)
 ```
 
 \[ \cite{Abeysekera2009}, \cite{Ben-Assuli2023}, \cite{Equeter2020}, \cite{Fan2002}, \cite{Gonzalez-Dominguez2022}, \cite{Faruk2018}, \cite{Deo2021}, \cite{Fox2023}, \cite{Bland2004}, \cite{Kuitunen2021}, \cite{Ponkilainene2021}, \cite{Vadeby2010} \]
