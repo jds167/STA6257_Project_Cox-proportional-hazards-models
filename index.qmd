@@ -527,9 +527,55 @@ Notably, Race_CategoryOther/Miscellaneous and Race_CategoryPacific Islander are 
 ```{r, warning=FALSE, echo=TRUE}
 cox_residuals3 <- residuals(cox_model3, type = "martingale")
 summary(cox_residuals3)
+qqnorm(cox_residuals3)
+qqline(cox_residuals3)
+
 cox.zph_result3 <- cox.zph(cox_model3)
 cox.zph_result3
 plot(cox.zph_result3)
 ```
+Time Dependent Covariates
 
+```{r, warning=FALSE, echo=TRUE}
+cox_model_time_dependent <- coxph(Surv(Survival.months, survived) ~ Age + Gender + tt(Race_Category), data = df)
+cox_summary_time_dependent <- summary(cox_model_time_dependent)
+table_data_time_dependent <- cox_summary_time_dependent$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
+kable(table_data_time_dependent, 
+      caption = "Cox Proportional Hazard Model with Time-Dependent Covariates",
+      format = "html", 
+      align = "c", 
+      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+```{r, warning=FALSE, echo=TRUE}
+cox_model_time_dependent_res <- residuals(cox_model_time_dependent, type = "martingale")
+summary(cox_model_time_dependent_res)
+qqnorm(cox_model_time_dependent_res)
+qqline(cox_model_time_dependent_res)
+
+```
+
+Piecewise Cox Proportional Hazard Model
+```{r, warning=FALSE, echo=TRUE}
+cox_model_piecewise <- coxph(Surv(Survival.months, survived) ~ Age + Gender + Race_Category, data = df, tt = list(Age))
+cox_summary_piecewise <- summary(cox_model_piecewise)
+table_data_piecewise <- cox_summary_piecewise$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
+kable(table_data_piecewise, 
+      caption = "Piecewise Cox Proportional Hazard Model",
+      format = "html", 
+      align = "c", 
+      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+```{r, warning=FALSE, echo=TRUE}
+cox_model_piece_res <- residuals(cox_model_piecewise, type = "martingale")
+summary(cox_model_piece_res)
+qqnorm(cox_model_piece_res)
+qqline(cox_model_piece_res)
+
+cox.zph_result_piecewise <- cox.zph(cox_model_piecewise)
+print(cox.zph_result_piecewise)
+plot(cox.zph_result_piecewise)
+```
 \[ \cite{Abeysekera2009}, \cite{Ben-Assuli2023}, \cite{Equeter2020}, \cite{Fan2002}, \cite{Gonzalez-Dominguez2022}, \cite{Faruk2018}, \cite{Deo2021}, \cite{Fox2023}, \cite{Bland2004}, \cite{Kuitunen2021}, \cite{Ponkilainene2021}, \cite{Vadeby2010} \]

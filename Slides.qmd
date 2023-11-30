@@ -65,7 +65,7 @@ $$
 
 ---
 
-#Data Visualizations
+### Data Visualization
 
 ::: panel-tabset
 
@@ -180,4 +180,85 @@ $$
 
 ---
 
-### Filtered Analysis on Deceased Patients
+### Adding an Interaction term to Filtered Analysis on Deceased Patients
+
+::: panel-tabset
+
+### Results
+
+![](Images/interactcox.jpg.png)
+
+### Residuals
+![](Images/interactrest.png)
+
+### QQPlot 
+![](Images/interactqq.jpg)
+
+### SR Gender
+![](Images/interact1.jpg)
+
+### SR Cancer
+![](Images/interact2.jpg)
+
+### SR Gender:Cancer
+![](Images/interact3.jpg)
+
+:::
+
+---
+
+### Data Analysis with Reference Categories
+
+::: panel-tabset
+
+### Results
+
+![](Images/fulldatacox.jpg)
+
+### Residuals
+![](Images/fulldatares.jpg)
+
+### QQPlot 
+![](Images/qqplotfulldata.jpg)
+
+### SR Age
+![](Images/fullres1.jpg)
+
+### SR Gender
+![](Images/fullres2.jpg)
+
+### SR Race
+![](Images/fullres3.jpg)
+
+:::
+
+---
+
+### Model with Time-Dependent Covariates
+
+::: panel-tabset
+
+### Results
+
+![](Images/timedep.png)
+
+### Residuals
+![](Images/restime.png)
+
+### QQPlot 
+![](Images/timedepqq.jpg)
+
+:::
+
+--- 
+
+### Conclusion 
+
+- Identified key predictors impacting cancer survival 
+- Explored survival dynamics
+- Proportional Hazards assumption violated
+- Stratification, Interaction Term, Time-Dependent covariates
+
+---
+
+### References
