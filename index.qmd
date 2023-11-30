@@ -534,7 +534,7 @@ cox.zph_result3 <- cox.zph(cox_model3)
 cox.zph_result3
 plot(cox.zph_result3)
 ```
-Time Dependent Covariates
+Time Dependent Covariates..
 
 ```{r, warning=FALSE, echo=TRUE}
 cox_model_time_dependent <- coxph(Surv(Survival.months, survived) ~ Age + Gender + tt(Race_Category), data = df)
@@ -556,6 +556,7 @@ qqline(cox_model_time_dependent_res)
 ```
 
 Piecewise Cox Proportional Hazard Model
+
 ```{r, warning=FALSE, echo=TRUE}
 cox_model_piecewise <- coxph(Surv(Survival.months, survived) ~ Age + Gender + Race_Category, data = df, tt = list(Age))
 cox_summary_piecewise <- summary(cox_model_piecewise)
