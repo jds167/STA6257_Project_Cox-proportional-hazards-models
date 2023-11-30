@@ -151,34 +151,33 @@ $$
 
 :::
 
+---
+
 ### Stratified Analysis 
 
 ::: panel-tabset
 
 ### Results
 
-![](Images/hazardmodel.jpg)
+![](Images/stratmodel.jpg)
 
 ### Residuals
-![](Images/residuals.png)
+![](Images/stratresidual.jpg)
 
 ### QQPlot 
-![](Images/QQplot.jpg)
-
-### SR Cancer
-![](Images/residual1.jpg)
+![](Images/stratgraph.jpg)
 
 ### SR Race
-![](Images/resiudal2.jpg)
+![](Images/stratres1.jpg)
 
 ### SR Gender
-![](Images/residual3.jpg)
+![](Images/stratres2.jpg)
 
 ### SR Age
-![](Images/residual4.jpg)
-
-
-
-
+![](Images/stratres3.jpg)
 
 :::
+
+---
+
+### Filtered Analysis on Deceased Patients

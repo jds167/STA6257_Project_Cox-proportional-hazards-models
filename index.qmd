@@ -428,6 +428,8 @@ We will write explanation here:
 ```{r, warning=FALSE, echo=TRUE}
 cox_stratified_residuals <- residuals(cox_model_stratified, type = "martingale")
 summary(cox_stratified_residuals)
+qqnorm(cox_stratified_residuals)
+qqline(cox_stratified_residuals)
 
 cox.zph_result_stratified <- cox.zph(cox_model_stratified)
 print(cox.zph_result_stratified)
@@ -457,10 +459,37 @@ The code above focuses on performing Cox Proportional Hazard model on individual
 ```{r, warning=FALSE, echo=TRUE}
 cox_residuals2 <- residuals(cox_model2, type = "martingale")
 summary(cox_residuals2)
+qqnorm(cox_residuals2)
+qqline(cox_residuals2)
+
 cox.zph_result2 <- cox.zph(cox_model2)
 cox.zph_result2
 plot(cox.zph_result2)
 ```
+
+This is using the interaction term Gender:Cancer_Group to the model
+```{r, warning=FALSE, echo=TRUE}
+cox_model_interaction <- coxph(Surv(Survival.months) ~ Gender + Cancer_Group + Gender:Cancer_Group, data = filtered_data)
+cox_summary_interaction <- summary(cox_model_interaction)
+table_data_interaction <- cox_summary_interaction$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
+kable(table_data_interaction, 
+      caption = "Cox Proportional Hazard Model Results on Deceased Patients with Interaction Term",
+      format = "html", 
+      align = "c", 
+      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+```{r, warning=FALSE, echo=TRUE}
+cox_residuals_interaction <- residuals(cox_model_interaction, type = "martingale")
+summary(cox_residuals_interaction)
+qqnorm(cox_residuals_interaction)
+qqline(cox_residuals_interaction)
+
+cox.zph_result_interaction <- cox.zph(cox_model_interaction)
+print(cox.zph_result_interaction)
+plot(cox.zph_result_interaction)
+```
+
 
 
 
