@@ -180,6 +180,30 @@ $$
 
 ---
 
+### Analysis on Deceased Patients
+
+::: panel-tabset
+
+### Results
+
+![](Images/deadmodel.jpg)
+
+### Residuals
+![](Images/deadresidual.jpg)
+
+### QQPlot 
+![](Images/deadqqplot.jpg)
+
+### SR Gender
+![](Images/deadres1.jpg)
+
+### SR Cancer
+![](Images/deadres2.jpg)
+
+:::
+
+---
+
 ### Adding an Interaction term to Filtered Analysis on Deceased Patients
 
 ::: panel-tabset
@@ -262,3 +286,26 @@ $$
 ---
 
 ### References
+
+Anna Vadeby, Goran Kecklund, Asa Forsman. 2010. “Sleepiness and Prediction of Driver Impairment in Simulator Studies Using a Cox Proportional Hazard Approach.” Research Article.
+
+Faruk, Alfensi. 2018. “The Comparison of Proportional Hazards and Acceleratedfailure Time Models in Analyzing the First Birth Interval Survival Data.” Research Article.
+
+Ilari Kuitunen, Mikko M. Uimonen, Ville T. Ponkilainene. 2021. “Testing the Proportional Hazards Assumption in Cox Regression and Dealing with Possible Non-Proportionality in Total Joint Arthroplasty Research: Methodological Perspectives and Review.” Research Article.
+
+J Martin Bland, Douglas G Altman. 2004. “The Logrank Test.” Research Article.
+Jaime Gonzalez-Dominguez, Justo Garcia-Sanz-Calcedo, Gonzalo Sanchez-Barroso. 2022. “Cox Proportional Hazards Model Used for Predictive Analysis of the Energy Consumption of Healthcare Buildings.” Research Article.
+
+Jianqing Fan, Runze Li. 2002. “Variable Selection for Cox’s Proportional Hazards Model and Frailty Model.” Research Article.
+
+John Fox, Sanford Weisberg. 2023. “Cox Proportional-Hazards Regression for Survival Data in r.” Research Article.
+
+Lucas Equeter, Edouard Riviere-Lorphevre, Francois Ducobu. 2020. “An Analytic Approach to the Cox Proportional Hazards Model for Estimating the Lifespan of Cutting Tools.” Research Article.
+
+Ofir Ben-Assuli, Tsipi Heart, Roni Ramon-Gonen. 2023. “Utilizing Shared Frailty with the Cox Proportional Hazards Regression: Post Discharge Survival Analysis of CHF Patients.” Research Article.
+
+Salil Vasudeo Deo, Varun Sundaram, Vishali Deo. 2021. “Survival Analysis—Part 2: Cox Proportional Hazards Model.” Research Article.
+
+Ville T. Ponkilainene, Antti Eskelinen, Mikko M. Uimonen. 2021. “Testing the Proportional Hazards Assumption in Cox Regression and Dealing with Possible Non-Proportionality in Total Joint Arthroplasty Research.” Research Article.
+
+W. W. M. Abeysekera, M. R. Sooriyarachchi. 2009. “Use of Schoenfeld’s Global Test to Test the Proportional Hazardsassumption in the Cox Proportional Hazards Model: An Application to a Clinical Study.” Research Article.
