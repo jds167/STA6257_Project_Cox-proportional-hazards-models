@@ -120,7 +120,24 @@ library(ggplot2)
 
 ```{r, warning=FALSE, echo=TRUE}
 Seer_updated<- read.csv("Seer_updated.csv")
+```
 
+```{r, warning=FALSE, echo=TRUE}
+ggplot(Seer_updated, aes(x = Site.recode.ICD.O.3.WHO.2008)) +
+  geom_bar() +
+  labs(title = "Bar Graph of site.recorded..", x = "Site Recorded", y = "Count")
+
+Seer_updated %>%
+  count(Site.recode.ICD.O.3.WHO.2008) %>%
+  arrange(desc(n)) %>%
+  head(10) %>%
+  ggplot(aes(x = reorder(Site.recode.ICD.O.3.WHO.2008, -n), y = n)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Top 10 Categories of site.recorded..", x = "Site Recorded", y = "Count") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+```{r, warning=FALSE, echo=TRUE}
 df <- Seer_updated %>%
   rename(
     Age = Age.recode.with.single.ages.and.85.,
@@ -148,11 +165,12 @@ df <- Seer_updated %>%
 df <- df %>%
   mutate(
     Cancer_Group = case_when(
-      df$COD_Site %in% c("Colon excluding Rectum", "Rectum and Rectosigmoid Junction") ~ "Colorectal",
-      df$COD_Site %in% c("Lung and Bronchus") ~ "Lung Cancer",
-      df$COD_Site %in% c("Pancreas") ~ "Pancreatic Cancer",
-      df$COD_Site %in% c("Breast") ~ "Breast Cancer",
-      df$COD_Site %in% c("Prostate") ~ "Prostate Cancer",
+      df$Site.recode.ICD.O.3.WHO.2008 %in% c("Breast") ~ "Breast Cancer",
+      df$Site.recode.ICD.O.3.WHO.2008 %in% c("Kidney and Renal Pelvis") ~ "Renal Cancer",
+      df$Site.recode.ICD.O.3.WHO.2008 %in% c("Thyroid") ~ "Thyroid Cancer",
+      df$Site.recode.ICD.O.3.WHO.2008 %in% c("Pancreas") ~ "Pancreatic Cancer",
+      df$Site.recode.ICD.O.3.WHO.2008 %in% c("Rectum") ~ "Rectal Cancer",
+      df$Site.recode.ICD.O.3.WHO.2008 %in% c("Liver") ~ "Liver Cancer",
       TRUE ~ "Other"
     )
   )
@@ -206,11 +224,7 @@ styled_table %>%
   as_gt() %>%
   gt::as_raw_html()
 
-styled_table %>%
-  kable() %>%
-  kable_styling(full_width = FALSE)
 ```
-
 ### Data Visualization
 
 This portion of the paper will provide an understanding of the variables that contribute to survival. The graphs below serve as a preliminary exploration of key demographic elements within our study cohort, encompassing variables such as gender, race, geographic origin, and temporal dynamics indicated by the year of diagnosis.In addition to demographic profiling, we include visual observation of the diversity of cancer types prevalent in the data set. 
@@ -371,11 +385,18 @@ ggplot(df, aes(x = Median_Household_Income, fill=Median_Household_Income)) +
 
 ## Statistical Modeling
 
+```{r, warning=FALSE, echo=TRUE}
+colSums(is.na(df))
+df_cleaned <- subset(df, complete.cases(Survival.months))
+colSums(is.na(df_cleaned))
+
+```
+
 In the below, we will use Cox Proportional Model to perform survival analysis. Coxph is a function from the survival package in R. Our primary objective is to examine the determinants influencing survival outcomes within a diverse data set of patients. Utilizing the Cox Proportional Hazard model, we explore the impact of key variables such as cancer type, race, gender, age, etc on the likelihood of survival. Our analysis centered on exploring these variables and their associated hazard ratios to better understand their significance in predicting survival. 
 
 We create a model with survival as our response variable and cancer group, race category, sex, and age as our predictive variable. The table below shows the results of our model. 
 ```{r, warning=FALSE, echo=TRUE}
-cox_model <- coxph(Surv(Survival.months, survived) ~ Cancer_Group + Race_Category + Sex + Age, data = df)
+cox_model <- coxph(Surv(Survival.months) ~ Race_Category + Sex + Age + Cancer_Group, data = df_cleaned)
 cox_summary <- summary(cox_model)
 table_data <- cox_summary$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
 kable(table_data, 
@@ -400,19 +421,16 @@ For example, if comparing two groups (e.g., males vs. females), the proportional
 ```{r, warning=FALSE, echo=TRUE}
 cox_residuals <- residuals(cox_model, type = "martingale")
 summary(cox_residuals)
-qqnorm(cox_residuals)
-qqline(cox_residuals)
 
 cox.zph_result <- cox.zph(cox_model)
 print(cox.zph_result)
-plot(cox.zph_result)
+plot(cox.zph(cox_model))
+
 ```
-All factors, except for sex, have an extremely small p-value suggesting that there is a violation of the proportional hazards assumption for all of these variables, including Sex but to a lesser extent. This suggests that the effects of these variables on survival might change over time, which could impact the accuracy of the Cox proportional hazards model's predictions. 
+Stratified Analysis
 
-
-Stratified Analysis 
 ```{r, warning=FALSE, echo=TRUE}
-cox_model_stratified <- coxph(Surv(Survival.months, survived) ~ Race_Category + Sex + Age + strata(Cancer_Group), data = df)
+cox_model_stratified <- coxph(Surv(Survival.months) ~ Race_Category + strata(Sex) + strata(Age) + Cancer_Group, data = df_cleaned)
 
 cox_summary_stratified <- summary(cox_model_stratified)
 table_data_stratified <- cox_summary_stratified$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
@@ -423,146 +441,22 @@ kable(table_data_stratified,
       col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
-We will write explanation here:
-
 ```{r, warning=FALSE, echo=TRUE}
 cox_stratified_residuals <- residuals(cox_model_stratified, type = "martingale")
 summary(cox_stratified_residuals)
-qqnorm(cox_stratified_residuals)
-qqline(cox_stratified_residuals)
 
 cox.zph_result_stratified <- cox.zph(cox_model_stratified)
 print(cox.zph_result_stratified)
 plot(cox.zph_result_stratified)
 ```
-
-In the model below, we took our data and filtered on deceased patients. Similar to above, we used deceased as the response variable and cancer group and gender as our predictive variable. The table below shows the results of our model. 
+filtering analysis
 ```{r, warning=FALSE, echo=TRUE}
-filtered_data <- df %>%
-  filter(survived == 1) # we only want those that didn't survive 
- filtered_data$status <- 1
- filtered_data$Cancer_Group <- as.factor(filtered_data$Cancer_Group)
-filtered_data$Gender <- ifelse(filtered_data$Sex == "Female", 0, 1)
-
-cox_model2 <- coxph(Surv(Survival.months) ~  Gender + Cancer_Group, data = filtered_data)
-cox_summary2 <- summary(cox_model2)
-table_data2 <- cox_summary2$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
-kable(table_data2, 
-      caption = "Cox Proportional Hazard Model Results on Deceased Patients",
-      format = "html", # Use "html" format for better appearance
-      align = "c", # Center-align the columns
-      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
-  kable_styling(bootstrap_options = "striped", full_width = FALSE)
-```
-
-The code above focuses on performing Cox Proportional Hazard model on individuals who did not survive. This allows for more targeted examination of factors and investigate the impact of gender, and cancer type on their survival. The hazard ratio, which is the (exp(coef)) for gender is 1.106. This means that males (coded as 1) have a 1.106 times higher risk of experiencing the event, in this case death, compare to females (coded as 0). The p-value ("< 2e-16") for Gender is very low, indicating that the hazard ratio is statistically significant. This means that "Gender" (with females as the reference) is associated with a significant difference in survival, and that difference favors females. In the Cancer_group category, Pancreatic Cancer has the highest hazard ratio among the cancer groups with approximately 1.919 . This represents an increase in the risk of the event at 91.9% increase. Thus, individuals with pancreatic cancer are at a significantly higher risk of non-survival. In addition, all Cancer_groups except for Prostate Cancer has a statistically significant impact on survival, which is seen in the p-value ("<2e16"). This implies that the differences in survival associated with these cancer types are unlikely to have occurred by chance. 
-```{r, warning=FALSE, echo=TRUE}
-cox_residuals2 <- residuals(cox_model2, type = "martingale")
-summary(cox_residuals2)
-qqnorm(cox_residuals2)
-qqline(cox_residuals2)
-
-cox.zph_result2 <- cox.zph(cox_model2)
-cox.zph_result2
-plot(cox.zph_result2)
-```
-
-This is using the interaction term Gender:Cancer_Group to the model
-```{r, warning=FALSE, echo=TRUE}
-cox_model_interaction <- coxph(Surv(Survival.months) ~ Gender + Cancer_Group + Gender:Cancer_Group, data = filtered_data)
-cox_summary_interaction <- summary(cox_model_interaction)
-table_data_interaction <- cox_summary_interaction$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
-kable(table_data_interaction, 
-      caption = "Cox Proportional Hazard Model Results on Deceased Patients with Interaction Term",
-      format = "html", 
-      align = "c", 
-      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
-  kable_styling(bootstrap_options = "striped", full_width = FALSE)
-```
-```{r, warning=FALSE, echo=TRUE}
-cox_residuals_interaction <- residuals(cox_model_interaction, type = "martingale")
-summary(cox_residuals_interaction)
-qqnorm(cox_residuals_interaction)
-qqline(cox_residuals_interaction)
-
-cox.zph_result_interaction <- cox.zph(cox_model_interaction)
-print(cox.zph_result_interaction)
-plot(cox.zph_result_interaction)
-```
-
-
-
-
-
-Using the original data set similar to our first model, we set white as the reference category and made female into a binary variable. We made white a reference category to compare the hazard ratios of other categories to it. So, a hazard ratio of 1 for another race category indicates the risk is the same, if it is less than 1 it suggests a lower risk of survival and greater than 1 is a higher risk of survival. 
-```{r, warning=FALSE, echo=TRUE}
-## not filtering on death only to see what is associated with higher risk of death compared to those that didn't die
-df$Gender <- ifelse(df$Sex == "Female", 0, 1)
-# Assuming you want "White" to be the reference category
-df$Race_Category <- as.factor(df$Race_Category)
-
-# Set "White" as the reference category
-df$Race_Category <- relevel(df$Race_Category, ref = "White")
-
-
-cox_model3 <- coxph(Surv(Survival.months, survived) ~ Age + Gender + Race_Category, data = df)
-cox_summary3 <- summary(cox_model3)
-table_data3 <- cox_summary3$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
-kable(table_data3, 
-      caption = "Cox Proportional Hazard Model Results (Full Data)",
-      format = "html", # Use "html" format for better appearance
-      align = "c", # Center-align the columns
-      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
-  kable_styling(bootstrap_options = "striped", full_width = FALSE)
-
-```
-
-The purpose of the code above is to examine the factors associated with a higher risk of survival compared to individuals who did die. We used the Race category white as a reference category as stated above. 
-Race_CategoryAsian has a hazard ratio of 0.8547, meaning that individuals in the Asian category have a 14.53% lower risk of survival compared to individuals in the white category.
-Race_CategoryBlack has a hazard ratio of 1.3478, indicating that individuals in the Black category have a 34.78% higher risk of survival compared to individuals in the white category.
-Race_CategoryOther/Miscellaneous has a hazard ratio of 0.8734, meaning that individuals in this category have a 12.66% lower risk of survival compared to individuals in the white category.
-Race_CategoryPacific Islander has a hazard ratio of 1.0706, indicating that individuals in the Pacific Islander category have a 7.06% higher risk of survival compared to individuals in the white category.
-Notably, Race_CategoryOther/Miscellaneous and Race_CategoryPacific Islander are not statistically significant predictors of the risk of survival as their p-values are greater than 0.05
-
-```{r, warning=FALSE, echo=TRUE}
-cox_residuals3 <- residuals(cox_model3, type = "martingale")
-summary(cox_residuals3)
-qqnorm(cox_residuals3)
-qqline(cox_residuals3)
-
-cox.zph_result3 <- cox.zph(cox_model3)
-cox.zph_result3
-plot(cox.zph_result3)
-```
-Time Dependent Covariates..
-
-```{r, warning=FALSE, echo=TRUE}
-cox_model_time_dependent <- coxph(Surv(Survival.months, survived) ~ Age + Gender + tt(Race_Category), data = df)
-cox_summary_time_dependent <- summary(cox_model_time_dependent)
-table_data_time_dependent <- cox_summary_time_dependent$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
-kable(table_data_time_dependent, 
-      caption = "Cox Proportional Hazard Model with Time-Dependent Covariates",
-      format = "html", 
-      align = "c", 
-      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
-  kable_styling(bootstrap_options = "striped", full_width = FALSE)
-```
-```{r, warning=FALSE, echo=TRUE}
-cox_model_time_dependent_res <- residuals(cox_model_time_dependent, type = "martingale")
-summary(cox_model_time_dependent_res)
-qqnorm(cox_model_time_dependent_res)
-qqline(cox_model_time_dependent_res)
-
-```
-
-Piecewise Cox Proportional Hazard Model
-
-```{r, warning=FALSE, echo=TRUE}
-cox_model_piecewise <- coxph(Surv(Survival.months, survived) ~ Age + Gender + Race_Category, data = df, tt = list(Age))
-cox_summary_piecewise <- summary(cox_model_piecewise)
-table_data_piecewise <- cox_summary_piecewise$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
-kable(table_data_piecewise, 
-      caption = "Piecewise Cox Proportional Hazard Model",
+filtered_data <- filter(df_cleaned, Cancer_Group == "Thyroid Cancer")
+cox_model_filtered <- coxph(Surv(Survival.months) ~ Race_Category + Sex + Age, data = filtered_data)
+cox_summary_filtered <- summary(cox_model_filtered)
+table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
+kable(table_data, 
+      caption = "Cox Proportional Hazard Model Results",
       format = "html", 
       align = "c", 
       col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
@@ -570,13 +464,209 @@ kable(table_data_piecewise,
 ```
 
 ```{r, warning=FALSE, echo=TRUE}
-cox_model_piece_res <- residuals(cox_model_piecewise, type = "martingale")
-summary(cox_model_piece_res)
-qqnorm(cox_model_piece_res)
-qqline(cox_model_piece_res)
+cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
+summary(cox_filtered_residuals)
 
-cox.zph_result_piecewise <- cox.zph(cox_model_piecewise)
-print(cox.zph_result_piecewise)
-plot(cox.zph_result_piecewise)
+cox.zph_result_filtered <- cox.zph(cox_model_filtered)
+print(cox.zph_result_filtered)
+plot(cox.zph_result_filtered)
+```
+time dependent ... 
+```{r, warning=FALSE, echo=TRUE}
+filtered_data <- filter(df_cleaned, Cancer_Group == "Thyroid Cancer")
+cox_model_time_dep <- coxph(Surv(Survival.months) ~ Race_Category + Sex + Age + tt(Race_Category), data = filtered_data)
+cox_summary_time_dep <- summary(cox_model_time_dep)
+table_data <- cox_summary_time_dep$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
+kable(table_data, 
+      caption = "Cox Proportional Hazard Model Results",
+      format = "html", 
+      align = "c", 
+      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+```{r, warning=FALSE, echo=TRUE}
+cox_filtered_residuals <- residuals(cox_model_time_dep, type = "schoenfeld")
+summary(cox_filtered_residuals)
+
+schoen_df <- data.frame(residuals = cox_filtered_residuals, time = filtered_data$Survival.months)
+
+plot(schoen_df$time, schoen_df$Race_Category, type = "p", xlab = "Time", ylab = "Schoenfeld Residuals")
+abline(h = 0, col = "red", lty = 2)  # Add a horizontal line at y = 0
+```
+interaction
+```{r, warning=FALSE, echo=TRUE}
+filtered_data <- filter(df_cleaned, Cancer_Group == "Thyroid Cancer")
+cox_model_filtered <- coxph(Surv(Survival.months) ~ Race_Category * Sex + Age, data = filtered_data)
+cox_summary_filtered <- summary(cox_model_filtered)
+table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
+kable(table_data, 
+      caption = "Cox Proportional Hazard Model Results",
+      format = "html", 
+      align = "c", 
+      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+```{r, warning=FALSE, echo=TRUE}
+cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
+summary(cox_filtered_residuals)
+
+cox.zph_result_filtered <- cox.zph(cox_model_filtered)
+print(cox.zph_result_filtered)
+plot(cox.zph_result_filtered)
+```
+
+```{r, warning=FALSE, echo=TRUE}
+filtered_data <- filter(df_cleaned, Cancer_Group == "Thyroid Cancer")
+cox_model_filtered <- coxph(Surv(Survival.months) ~  Sex + Age + strata(Race_Category), data = filtered_data)
+cox_summary_filtered <- summary(cox_model_filtered)
+table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
+kable(table_data, 
+      caption = "Cox Proportional Hazard Model Results",
+      format = "html", 
+      align = "c", 
+      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+```{r, warning=FALSE, echo=TRUE}
+cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
+summary(cox_filtered_residuals)
+
+cox.zph_result_filtered <- cox.zph(cox_model_filtered)
+print(cox.zph_result_filtered)
+plot(cox.zph_result_filtered)
+```
+
+```{r, warning=FALSE, echo=TRUE}
+filtered_data <- filter(df_cleaned, Cancer_Group == "Thyroid Cancer")
+filtered_data$Binary_Race <- ifelse(filtered_data$Race_Category == "Black", "Black", "Other")
+filtered_data$Binary_Race <- as.factor(filtered_data$Binary_Race)
+cox_model_filtered <- coxph(Surv(Survival.months) ~ Binary_Race + Sex + Age, data = filtered_data)
+cox_summary_filtered <- summary(cox_model_filtered)
+table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
+kable(table_data, 
+      caption = "Cox Proportional Hazard Model Results",
+      format = "html", 
+      align = "c", 
+      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+```{r, warning=FALSE, echo=TRUE}
+cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
+summary(cox_filtered_residuals)
+
+cox.zph_result_filtered <- cox.zph(cox_model_filtered)
+print(cox.zph_result_filtered)
+plot(cox.zph_result_filtered)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+Renal Cancer
+
+```{r, warning=FALSE, echo=TRUE}
+filtered_data <- filter(df_cleaned, Cancer_Group == "Renal Cancer")
+cox_model_filtered <- coxph(Surv(Survival.months) ~ Race_Category + Sex + Age, data = filtered_data)
+cox_summary_filtered <- summary(cox_model_filtered)
+table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
+kable(table_data, 
+      caption = "Cox Proportional Hazard Model Results",
+      format = "html", 
+      align = "c", 
+      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+```{r, warning=FALSE, echo=TRUE}
+cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
+summary(cox_filtered_residuals)
+
+cox.zph_result_filtered <- cox.zph(cox_model_filtered)
+print(cox.zph_result_filtered)
+plot(cox.zph_result_filtered)
+```
+```{r, warning=FALSE, echo=TRUE}
+filtered_data <- filter(df_cleaned, Cancer_Group == "Renal Cancer")
+cox_model_filtered <- coxph(Surv(Survival.months) ~ Race_Category + Sex + strata(Age), data = filtered_data)
+cox_summary_filtered <- summary(cox_model_filtered)
+table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
+kable(table_data, 
+      caption = "Cox Proportional Hazard Model Results",
+      format = "html", 
+      align = "c", 
+      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+```{r, warning=FALSE, echo=TRUE}
+cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
+summary(cox_filtered_residuals)
+
+cox.zph_result_filtered <- cox.zph(cox_model_filtered)
+print(cox.zph_result_filtered)
+plot(cox.zph_result_filtered)
+```
+
+```{r, warning=FALSE, echo=TRUE}
+filtered_data <- filter(df_cleaned, Cancer_Group == "Renal Cancer")
+cox_model_filtered <- coxph(Surv(Survival.months) ~ Race_Category * Sex + strata(Age), data = filtered_data)
+cox_summary_filtered <- summary(cox_model_filtered)
+table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
+kable(table_data, 
+      caption = "Cox Proportional Hazard Model Results",
+      format = "html", 
+      align = "c", 
+      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+```{r, warning=FALSE, echo=TRUE}
+cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
+summary(cox_filtered_residuals)
+
+cox.zph_result_filtered <- cox.zph(cox_model_filtered)
+print(cox.zph_result_filtered)
+plot(cox.zph_result_filtered)
+```
+
+```{r, warning=FALSE, echo=TRUE}
+filtered_data <- filter(df_cleaned, Cancer_Group == "Renal Cancer")
+filtered_data$Binary_Race <- ifelse(filtered_data$Race_Category == "Black", "Black", "Other")
+filtered_data$Binary_Race <- as.factor(filtered_data$Binary_Race)
+levels(filtered_data$Binary_Race)
+
+cox_model_filtered <- coxph(Surv(Survival.months) ~ Binary_Race * Sex + strata(Age), data = filtered_data)
+
+cox_summary_filtered <- summary(cox_model_filtered)
+table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
+kable(table_data, 
+      caption = "Cox Proportional Hazard Model Results",
+      format = "html", 
+      align = "c", 
+      col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+```{r, warning=FALSE, echo=TRUE}
+cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
+summary(cox_filtered_residuals)
+
+cox.zph_result_filtered <- cox.zph(cox_model_filtered)
+print(cox.zph_result_filtered)
+plot(cox.zph_result_filtered)
+```
+
+
+
+
 ```
 \[ \cite{Abeysekera2009}, \cite{Ben-Assuli2023}, \cite{Equeter2020}, \cite{Fan2002}, \cite{Gonzalez-Dominguez2022}, \cite{Faruk2018}, \cite{Deo2021}, \cite{Fox2023}, \cite{Bland2004}, \cite{Kuitunen2021}, \cite{Ponkilainene2021}, \cite{Vadeby2010} \]
