@@ -66,8 +66,6 @@ Although the diversity with the Cox Proportional Hazard model is myriad, it stil
 
 In the subsequent sections, we will delve deeper into the intricacies of the data set and the methodology employed in our analysis, further illuminating the applications and implications of the Cox Proportional Hazard model in the context of our research.
 
-(SMALL)
-
 ## Methods
 
 The Cox Proportional Hazard Model is a widely used semiparametric survival analysis method that provides a flexible framework for modeling the hazard rate in the presence of right-censored data. Right-censored data is a type of data where the event of interest like death or failure has not occurred for some of the subjects int he study by the end of observation period. Thus, the exact event time is unknown or not observed for these subjects. In this model, the hazard rate at any time point is expressed as the product of a baseline hazard function, denoted as λ0(t) and an exponential function of a linear combination of covariates. 
@@ -80,11 +78,11 @@ $$
 This is where: 
 $λ(t)$ represents the hazard rate at time t.
 $λ0(t)$ is the baseline hazard function, representing the hazard in the absence of covariates.
-$β₁, β₂, ..., βₖ$ are coefficients associated with covariates$X₁, X₂, ..., Xₖ,$ respectively.
+$β₁, β₂, ..., βₖ$ are coefficients associated with covariates $X₁, X₂, ..., Xₖ,$ respectively.
 
 #### Assumptions 
 
-Proportional Hazards Assumption -  This assumption of the Cox model states that the effect of covariates on the hazard rate remains constant and is not time-dependent. The hazard ratio between two individuals should stay consistent over time if one individual's covariate values are a constant factor of the other's.
+Proportional Hazards Assumption - This assumption of the Cox model states that the effect of covariates on the hazard rate remains constant and is not time-dependent. The hazard ratio between two individuals should stay consistent over time if one individual's covariate values are a constant factor of the other's.
 
 Independence of Censoring - The model assumes that the censoring process (the event of not observing the outcome) is independent of the event of interest. Hence, censoring process is not related to the underlying risk of the event. 
 
@@ -122,22 +120,23 @@ library(ggplot2)
 Seer_updated<- read.csv("Seer_updated.csv")
 ```
 
+Upon reviewing our dataset, it became evident that numerous cancer categories were present. In an effort to enhance our data preprocessing, we generated a bar graph to facilitate the creation of a new column dedicated to this categorical information. As illustrated, the top 10 categories are highlighted, with breast cancer ranking highest, followed by renal cancer. 
 ```{r, warning=FALSE, echo=TRUE}
-ggplot(Seer_updated, aes(x = Site.recode.ICD.O.3.WHO.2008)) +
-  geom_bar() +
-  labs(title = "Bar Graph of site.recorded..", x = "Site Recorded", y = "Count")
-
 Seer_updated %>%
   count(Site.recode.ICD.O.3.WHO.2008) %>%
   arrange(desc(n)) %>%
   head(10) %>%
   ggplot(aes(x = reorder(Site.recode.ICD.O.3.WHO.2008, -n), y = n)) +
-  geom_bar(stat = "identity") +
-  labs(title = "Top 10 Categories of site.recorded..", x = "Site Recorded", y = "Count") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+  geom_bar(stat = "identity", fill = "purple", color = "black") +  
+  labs(title = "Top 10 Categories of Death for Cancer",
+       x = "Site Recorded",
+       y = "Count") +
+  theme_minimal() +  
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
-
+In the code below, we begin preprocessing our data based on certain columns and the information we have above. 
 ```{r, warning=FALSE, echo=TRUE}
+#First we select relevant columns and create a new variable, 'survived' to represent survival status based on COD.to.site.recode column.
 df <- Seer_updated %>%
   rename(
     Age = Age.recode.with.single.ages.and.85.,
@@ -152,9 +151,12 @@ df <- Seer_updated %>%
   ) %>%
   mutate(survived = ifelse(COD_Site == "Alive", 0, 1))
 
+#We converted certain columns to numeric and adjusted the 'Age' variable so that it is only numeric. 
   df$Age <- sub(" years", "", df$Age)
   df$Age <- as.numeric(df$Age)
   df$Survival.months <- as.numeric(df$Survival.months)
+  
+#For patient's races, we created broader categoires for better interpretation.
   df$Race_Category <- case_when(
   df$Race %in% c("White") ~ "White",
   df$Race %in% c("Black") ~ "Black",
@@ -162,6 +164,8 @@ df <- Seer_updated %>%
   df$Race %in% c("Chamorran", "Fiji Islander", "Guamanian", "Hawaiian", "Micronesian", "Samoan", "Tahitian", "Tongan", "Pacific Islander") ~ "Pacific      Islander",
   TRUE ~ "Other/Miscellaneous"
 )
+  
+#Based on the bar plot above, we categorizer cancer types into meaningful groups.
 df <- df %>%
   mutate(
     Cancer_Group = case_when(
@@ -174,6 +178,8 @@ df <- df %>%
       TRUE ~ "Other"
     )
   )
+
+#Created a summary table to better understand our variables
 styled_table <- df %>%
   select(
     Age,
@@ -229,7 +235,6 @@ styled_table %>%
 
 This portion of the paper will provide an understanding of the variables that contribute to survival. The graphs below serve as a preliminary exploration of key demographic elements within our study cohort, encompassing variables such as gender, race, geographic origin, and temporal dynamics indicated by the year of diagnosis.In addition to demographic profiling, we include visual observation of the diversity of cancer types prevalent in the data set. 
 
-
 Below is the distribution of patient age using a histogram and density plot. We find that majority of the patients are between the ages of 60-70.
 
 ```{r, warning=FALSE, echo=TRUE}
@@ -251,7 +256,7 @@ density_plot <- ggplot(df, aes(x = Age)) +
 grid.arrange(histogram_plot, density_plot, ncol = 2)
 ```
 
-Below is a bar chart for race category. The distribution of race categories reveals a significant imbalance, with the number of individuals in the White category are approximately four times greater than in any other race category. This highlights the necessity for data preprocessing techniques to ensure robust model performance. 
+Below is a bar chart for race category. The distribution of race categories reveals a significant imbalance, with the number of individuals in the White category being approximately four times greater than in any other race category.
 
 ```{r, warning=FALSE, echo=TRUE}
 bar_plot <- ggplot(df, aes(x = Race_Category)) +
@@ -321,7 +326,7 @@ histogram_plot <- ggplot(df, aes(x = Survival.months)) +
 
 histogram_plot
 ```
-Below is the distribution of the type of cancers in the data set. When analyzing the data, we notice that there is a m=higher count of others compared to breast cancer, colorectal, lung cancer, pancreatic cancer and prostate cancer. 
+Below is the distribution of the type of cancers in the data set. When analyzing the data, we notice that there is a higher count of others compared to breast cancer, colorectal, lung cancer, pancreatic cancer and prostate cancer. 
 
 ```{r, warning=FALSE, echo=TRUE}
 bar_plot <- ggplot(df, aes(x = Cancer_Group)) +
@@ -385,6 +390,8 @@ ggplot(df, aes(x = Median_Household_Income, fill=Median_Household_Income)) +
 
 ## Statistical Modeling
 
+In our earlier data preparation steps, we took the time to get our dataset in shape.As part of a thorough quality check, we went on the lookout for any missing values. Interestingly, we noticed that the 'Survival.months'column had some entries labeled as 'Unknown'.To keep things reliable, we decided to drop these entries, making sure our dataset is all set for the next stages of analysis.
+
 ```{r, warning=FALSE, echo=TRUE}
 colSums(is.na(df))
 df_cleaned <- subset(df, complete.cases(Survival.months))
@@ -394,7 +401,7 @@ colSums(is.na(df_cleaned))
 
 In the below, we will use Cox Proportional Model to perform survival analysis. Coxph is a function from the survival package in R. Our primary objective is to examine the determinants influencing survival outcomes within a diverse data set of patients. Utilizing the Cox Proportional Hazard model, we explore the impact of key variables such as cancer type, race, gender, age, etc on the likelihood of survival. Our analysis centered on exploring these variables and their associated hazard ratios to better understand their significance in predicting survival. 
 
-We create a model with survival as our response variable and cancer group, race category, sex, and age as our predictive variable. The table below shows the results of our model. 
+We create a model with survival months as our response variable and cancer group, race category, sex, and age as our predictive variable. The table below shows the results of our model. 
 ```{r, warning=FALSE, echo=TRUE}
 cox_model <- coxph(Surv(Survival.months) ~ Race_Category + Sex + Age + Cancer_Group, data = df_cleaned)
 cox_summary <- summary(cox_model)
@@ -407,17 +414,9 @@ kable(table_data,
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 
 ```
-
-The model's coefficient estimates and hazard ratios demonstrate the magnitude and direction of the influence of each covariate on survival.
-Breast Cancer displays a hazard ratio of approximately 15.32, indicating individuals with breast cancer face around 15.32 times higher risk of death compared to those with "Other" cancer types, holding other variables constant. Similarly, Pancreatic Cancer exhibits a hazard ratio of 14.17, signifying a notably elevated risk of mortality.
-Within race categories, Asian and Other/Miscellaneous designations showcase hazard ratios slightly below 1, suggesting marginally lower hazards (or risks) of death compared to the reference group (White). Conversely, Black and Pacific Islander categories demonstrate hazard ratios slightly above 1, implying slightly elevated hazards (or risks) of death compared to the White individuals.
-Males exhibit a hazard ratio of approximately 2.33, indicating a 2.33 times higher risk of death compared to females, when other variables are held constant. Each one-unit increase in age corresponds to a 3% increase in the hazard (or risk) of death, holding other factors constant.
+The model's coefficient estimates and hazard ratios demonstrate the magnitude and direction of the influence of each covariate on survival.The Black race category exhibits a coefficient of 0.0334489, translating to a hazard ratio of 1.0340146 and indicating a 3.4% higher hazard compared to other race categories. Similarly, the Other/Miscellaneous race category, with a coefficient of 0.0608675 and a hazard ratio of 1.0627581, demonstrates a 6.3% increased hazard compared to the reference group. In contrast, Pacific Islander and White race categories do not appear to significantly impact the hazard ratio.Being male has a coefficient of 0.0350546, meaning a hazard ratio of 1.0356763. This implies a 3.6% increase in the hazard of the event for males compared to females.For every one-unit increase in age, there's a hazard ratio of 1.0039630, suggesting a 0.4% increase in the hazard of death per unit increase in age.The impact of cancer types on survival is notable, with Liver Cancer, Other, Pancreatic Cancer, Rectal Cancer, and Renal Cancer groups all showing significant effects (all p-values < 0.05) on the hazard ratios. For example, Liver Cancer, with a coefficient of 0.5915345 and a hazard ratio of 1.8067588, indicates a substantially higher risk of death. Pancreatic Cancer stands out with the highest hazard ratio among these groups, signaling a 2.44 times higher hazard. This observation aligns with our visual representation in the bar graph of cancer types among deceased patients. Conversely, Thyroid Cancer lacks statistical significance, consistent with its lower prevalence among deceased patients according to our bar graph.
 
 Below we check if the proportional hazards assumption holds true for each factor in the Cox model. This assumption is extremely important in survival analysis because it suggests that the influence of factors stays the same over time. The proportional hazards assumption implies that the effect of a variable (like gender, age) on the hazard (or risk) of an event (such as death) remains constant or proportional over different durations or time periods.
-
-For example, if comparing two groups (e.g., males vs. females), the proportional hazards assumption suggests that the ratio of their risks of experiencing the event (like death) remains the same throughout the observation period. This implies that the effect of being male (compared to being female) on the risk of the event doesn't change over time.
-
-
 ```{r, warning=FALSE, echo=TRUE}
 cox_residuals <- residuals(cox_model, type = "martingale")
 summary(cox_residuals)
@@ -427,8 +426,11 @@ print(cox.zph_result)
 plot(cox.zph(cox_model))
 
 ```
-Stratified Analysis
+Martingale residuals are a type of residual in survival analysis, specifically designed for Cox Proportional Hazard Models. These residuals are based on the difference between the observed event indicator and the predicted probability of an event at the observed failure time. The martingale residuals are useful for assessing the overall fit of the model and identifying potential patterns or outliers.The Schoenfeld test is a diagnostic test used to assess the proportional hazards assumption in the Cox Proportional Hazard Model. The proportional hazards assumption assumes that the hazard ratio between any two individuals is constant over time. The Schoenfeld test checks if the relationship between the predictor variables and the hazard is constant over time. Based on our results, our proportional hazards assumptions are violated given the p-values. We will use stratifying technique to see if we can improve our model. 
 
+####Stratified Analysis
+
+Due to our proportional hazards assumptions being violated, we decided to use stratification. Stratification is used to handle the influence of variables that violate the proportional hazards assumption. When certain variables are suspected to have different baseline hazard functions, which means they violate the proportional hazards assumption, we use strata to stratify the model by those variables. This allows each stratum to  have its own baseline hazard function, allowing for varying hazard ratios across strata. For this particular part, we decided to strata sex and age in order to see how our model will perform. 
 ```{r, warning=FALSE, echo=TRUE}
 cox_model_stratified <- coxph(Surv(Survival.months) ~ Race_Category + strata(Sex) + strata(Age) + Cancer_Group, data = df_cleaned)
 
@@ -441,6 +443,8 @@ kable(table_data_stratified,
       col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
+The coefficient for being is 0.0350228, leading to a hazard ratio of 1.0356434. This indicates a significant 3.56% increase in the hazard of the event for males compared to females. For every one-unit increase in age, the hazard ratio is 1.0039582, suggesting a significant but minimal 0.40% increase in the hazard of death per unit increase in age. For Thyroid Cancer, the coefficient is -0.0018693, resulting in a hazard ratio of 0.9981324. This is not statistically significant, suggesting that the hazard of the event does not significantly differ for individuals with thyroid cancer compared to the reference group.
+
 ```{r, warning=FALSE, echo=TRUE}
 cox_stratified_residuals <- residuals(cox_model_stratified, type = "martingale")
 summary(cox_stratified_residuals)
@@ -449,19 +453,22 @@ cox.zph_result_stratified <- cox.zph(cox_model_stratified)
 print(cox.zph_result_stratified)
 plot(cox.zph_result_stratified)
 ```
-filtering analysis
+Given the violation of assumptions observed in our stratified Cox Proportional Hazard Model, particularly in terms of non-proportional hazards for variables like Sex, Age, and Cancer_Group, we decided to refine our analysis by filtering on a specific cancer type, Thyroid Cancer. This strategic filtering allows us to explore the impact of this particular cancer type while potentially mitigating the observed violations.
+
+####Filtering analysis with Thyroid Cancer
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- filter(df_cleaned, Cancer_Group == "Thyroid Cancer")
 cox_model_filtered <- coxph(Surv(Survival.months) ~ Race_Category + Sex + Age, data = filtered_data)
 cox_summary_filtered <- summary(cox_model_filtered)
 table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
 kable(table_data, 
-      caption = "Cox Proportional Hazard Model Results",
+      caption = "Filtered Cox Proportional Hazard Model Results",
       format = "html", 
       align = "c", 
       col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
+After narrowing down our focus to Thyroid Cancer cases, the Cox Proportional Hazard Model reveals intriguing insights. Black race category has a coefficient of -0.0724061, indicating a hazard ratio of 0.9301531. This suggests a 6.99% decrease in the hazard of Thyroid Cancer compared to other racial categories. Being male has a coefficient of 0.0351059, resulting in a hazard ratio of 1.0357294. This indicates a 3.57% increase in the hazard of the event for males compared to females among thyroid cancer patients. For every one-unit increase in age, there's a hazard ratio of 1.0012238, suggesting a 0.12% increase in the hazard of the event per unit increase in age among thyroid cancer patients.
 
 ```{r, warning=FALSE, echo=TRUE}
 cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
@@ -471,20 +478,24 @@ cox.zph_result_filtered <- cox.zph(cox_model_filtered)
 print(cox.zph_result_filtered)
 plot(cox.zph_result_filtered)
 ```
-time dependent ... 
+By filtering on Thyroid Cancer, we see that our p-values increase a little bit, but our assumptions remain violated. For the Schoenfeld Test the p-value for Race Category is .00042 indicating significant deviation from proportional hazards for Race Category within Thyroid Cancer. For Sex and Age, it has a p-value of .46600 and .09322, respectively. This shows that against a p-value of .05, it is not violating, however our global test emphasizes the challenge in maintaing proportional hazards assumptions within the strata. Based on this, we will use time dependent variables to see if it improves our model. 
+
+####Time Dependent Analysis
+We decided to implement a time dependent covariates as stated above. This approach enables us to examine how the hazard ratios categories change over time, providing a better understanding of their impact on survival outcome. The tt function is used to create time-transformed variables for selected covariates. 
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- filter(df_cleaned, Cancer_Group == "Thyroid Cancer")
 cox_model_time_dep <- coxph(Surv(Survival.months) ~ Race_Category + Sex + Age + tt(Race_Category), data = filtered_data)
 cox_summary_time_dep <- summary(cox_model_time_dep)
 table_data <- cox_summary_time_dep$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
 kable(table_data, 
-      caption = "Cox Proportional Hazard Model Results",
+      caption = "Time Dependent Cox Proportional Hazard Model Results",
       format = "html", 
       align = "c", 
       col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
-
+The time-dependent Cox proportional hazards model, specifically focusing on "Thyroid Cancer," reveals intriguing findings. Among race categories, while Black race shows a marginal increase (1.57%) in the hazard compared to the reference group, Other/Miscellaneous, Pacific Islander, and notably, White race exhibit significantly higher hazard ratios, with White race displaying a remarkably elevated hazard ratio of 14.03. 
+Additionally, being male corresponds to a 3.59% higher hazard compared to females among thyroid cancer patients. Age shows a small yet significant impact, with a 0.12% increase in the hazard per unit increase in age. Notably, the time-dependent interaction term (tt(Race_Category)) suggests a varying impact of race categories on the hazard over time, revealing a decrease in hazard ratio for a specified race category with each unit increase in time compared to the reference time point. These findings highlight dynamic variations in hazard ratios concerning race categories and time among patients diagnosed with thyroid cancer.
 ```{r, warning=FALSE, echo=TRUE}
 cox_filtered_residuals <- residuals(cox_model_time_dep, type = "schoenfeld")
 summary(cox_filtered_residuals)
@@ -492,21 +503,32 @@ summary(cox_filtered_residuals)
 schoen_df <- data.frame(residuals = cox_filtered_residuals, time = filtered_data$Survival.months)
 
 plot(schoen_df$time, schoen_df$Race_Category, type = "p", xlab = "Time", ylab = "Schoenfeld Residuals")
-abline(h = 0, col = "red", lty = 2)  # Add a horizontal line at y = 0
+abline(h = 0, col = "purple", lty = 2)  
+
+plot(schoen_df$time, schoen_df$Age, type = "p", xlab = "Time", ylab = "Schoenfeld Residuals")
+abline(h = 0, col = "purple", lty = 2) 
+
+plot(schoen_df$time, schoen_df$Sex, type = "p", xlab = "Time", ylab = "Schoenfeld Residuals")
+abline(h = 0, col = "purple", lty = 2) 
+
 ```
-interaction
+The cox.zph() function does not support time-transformed terms. Nevertheless, we can visually inspect the Schoenfeld residuals through plots to identify trends or patterns that might indicate a violation of the proportional hazards assumption. Our visual examination suggests that the proportional hazards assumption is not met. Consequently, we will explore an alternative approach by incorporating interactions in our model.
+
+####Interaction Analysis
+In survival analysis, an interaction term is often used to assess whether the effect of one variable on the outcome is modified by the presence of another variable. It allows us to explore whether the combined influence of two variables is greater (or different) than the sum of their individual effects.
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- filter(df_cleaned, Cancer_Group == "Thyroid Cancer")
 cox_model_filtered <- coxph(Surv(Survival.months) ~ Race_Category * Sex + Age, data = filtered_data)
 cox_summary_filtered <- summary(cox_model_filtered)
 table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
 kable(table_data, 
-      caption = "Cox Proportional Hazard Model Results",
+      caption = "Interaction Cox Proportional Hazard Model Results",
       format = "html", 
       align = "c", 
       col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
+These results reveal that among thyroid cancer patients, Black race shows a reduced hazard compared to the reference, while being male also slightly decreases the hazard. Additionally, there's a significant interaction effect indicating a higher hazard among Black males specifically, compared to other race-gender combinations.
 
 ```{r, warning=FALSE, echo=TRUE}
 cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
@@ -516,19 +538,22 @@ cox.zph_result_filtered <- cox.zph(cox_model_filtered)
 print(cox.zph_result_filtered)
 plot(cox.zph_result_filtered)
 ```
+The overall or global test for the proportional hazards assumption (GLOBAL) combines all the variables and interactions. With a chi-squared test statistic of 24.625, 10 degrees of freedom, and a p-value of 0.00610, there’s evidence suggesting a violation of the proportional hazards assumption in the model among thyroid cancer cases. These results indicate that while some individual variables or interactions might not violate the assumption significantly(like Sex and Age), the model as a whole shows some evidence of departure from proportional hazards assumption among thyroid cancer patients.To further test this out I decided to use stratification in our next analysis. 
 
+####Filtered Analysis with Stratification 
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- filter(df_cleaned, Cancer_Group == "Thyroid Cancer")
 cox_model_filtered <- coxph(Surv(Survival.months) ~  Sex + Age + strata(Race_Category), data = filtered_data)
 cox_summary_filtered <- summary(cox_model_filtered)
 table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
 kable(table_data, 
-      caption = "Cox Proportional Hazard Model Results",
+      caption = "Stratified Filtered Cox Proportional Hazard Model Results",
       format = "html", 
       align = "c", 
       col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
+These results highlight the impact of Sex and Age on the hazard ratio among individuals diagnosed with thyroid cancer. Being male is associated with a slightly higher hazard compared to females, and age also shows a small yet significant effect on the hazard ratio in this particular group of patients.
 
 ```{r, warning=FALSE, echo=TRUE}
 cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
@@ -538,7 +563,10 @@ cox.zph_result_filtered <- cox.zph(cox_model_filtered)
 print(cox.zph_result_filtered)
 plot(cox.zph_result_filtered)
 ```
+For Sex, the p-value is 0.396, suggesting no statistically significant violation of the proportional hazards assumption. Regarding Age, the p-value is 0.054, indicating a borderline violation; however, it remains above 0.05. The GLOBAL p-value for the entire model is 0.130. Since this value exceeds 0.05, there is no strong statistical evidence against the assumption of proportional hazards for the model as a whole. Since our p-value went up when disregarding the race-category, we decided to further filter our dataset. 
 
+####Filtering Analysis on Cancer and Race
+Below, we create a new variable called "Binary_Race" where we separate it into a binary variable" Black or other. This helps simplify the analysis and helps us dig deeper. 
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- filter(df_cleaned, Cancer_Group == "Thyroid Cancer")
 filtered_data$Binary_Race <- ifelse(filtered_data$Race_Category == "Black", "Black", "Other")
@@ -547,12 +575,14 @@ cox_model_filtered <- coxph(Surv(Survival.months) ~ Binary_Race + Sex + Age, dat
 cox_summary_filtered <- summary(cox_model_filtered)
 table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
 kable(table_data, 
-      caption = "Cox Proportional Hazard Model Results",
+      caption = "Double Filtered Cox Proportional Hazard Model Results",
       format = "html", 
       align = "c", 
       col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
+In the output above, we run a Cox proportional hazards model focused on individuals with Thyroid Cancer.The variable Binary_RaceOther doesn't show a statistically significant impact, indicating a minimal effect on the hazard ratio between the "Other" racial category and the reference (Black). However, being male exhibits a statistically significant impact, with a coefficient of 0.0324967, suggesting a 3.30% higher hazard compared to females. Moreover, Age displays a statistically significant effect, indicating that for every one-unit increase in age, there's a 0.11% rise in the hazard of the event among individuals diagnosed with thyroid cancer.
+
 ```{r, warning=FALSE, echo=TRUE}
 cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
 summary(cox_filtered_residuals)
@@ -561,33 +591,25 @@ cox.zph_result_filtered <- cox.zph(cox_model_filtered)
 print(cox.zph_result_filtered)
 plot(cox.zph_result_filtered)
 ```
+The martingale residuals display a distribution centered around 0, indicating a reasonable fit of the Cox model to the data. The Schoenfeld residuals show that none of the variables significantly violate the proportional hazards assumption individually. The GLOBAL test reinforces this, suggesting that, collectively, the variables do not provide strong evidence against the proportional hazards assumption. By editing the Race_Category we found that our model improved overall. 
 
+####Filter Analysis with Renal Cancer
 
-
-
-
-
-
-
-
-
-
-
-
-Renal Cancer
-
+Below, we decided to do a similar analysis but focus on Renal Cancer, which was one of our more common cancer types among deceased patients. 
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- filter(df_cleaned, Cancer_Group == "Renal Cancer")
 cox_model_filtered <- coxph(Surv(Survival.months) ~ Race_Category + Sex + Age, data = filtered_data)
 cox_summary_filtered <- summary(cox_model_filtered)
 table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
 kable(table_data, 
-      caption = "Cox Proportional Hazard Model Results",
+      caption = "Filtered Cox Proportional Hazard Model Results",
       format = "html", 
       align = "c", 
       col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
+None of the race categories show a statistically significant impact on the hazard ratio, as indicated by their respective p-values.This suggests that, within the context of Renal Cancer, these racial categories do not significantly alter the hazard of the event. The coefficient for being male is -0.0041979, resulting in a hazard ratio of 0.9958109. This implies a negligible decrease 0.42% in the hazard of the event for males compared to females with Renal Cancer. However, the effect is not statistically significant, with a p-value of 0.6316300. The coefficient for Age is 0.0042975, corresponding to a hazard ratio of 1.0043067. This indicates a statistically significant 0.43% increase in the hazard of the event for every one-unit increase in age among individuals diagnosed with Renal Cancer.
+
 ```{r, warning=FALSE, echo=TRUE}
 cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
 summary(cox_filtered_residuals)
@@ -596,18 +618,25 @@ cox.zph_result_filtered <- cox.zph(cox_model_filtered)
 print(cox.zph_result_filtered)
 plot(cox.zph_result_filtered)
 ```
+Sex shows no evidence of violating the proportional hazards assumption, both Race_Category and especially Age demonstrate substantial departures from the assumption. The global test confirms a significant violation, suggesting that the model doesn't satisfy the assumption of constant hazard ratios over time for renal cancer cases.
+ 
+Given how many of our patients with renal cancer end up passing, it makes sense as to why our variables are statistically significant. We dug deeper and looked into stratifying our model to look at individual variables more closely.
+
+####Stratification on Renal Cancer Analysis
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- filter(df_cleaned, Cancer_Group == "Renal Cancer")
 cox_model_filtered <- coxph(Surv(Survival.months) ~ Race_Category + Sex + strata(Age), data = filtered_data)
 cox_summary_filtered <- summary(cox_model_filtered)
 table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
 kable(table_data, 
-      caption = "Cox Proportional Hazard Model Results",
+      caption = "Stratification on Renal Cancer Cox Proportional Hazard Model Results",
       format = "html", 
       align = "c", 
       col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
+Across the race categories, none exhibit a statistically significant impact on the hazard ratio, as indicated by their respective p-values. This suggests that, within the context of Renal Cancer and after accounting for age as a stratification variable, these racial categories do not significantly alter the hazard of the event.The coefficient for being male is -0.0020202, resulting in a hazard ratio of 0.9979818. This implies a minimal decrease 0.20% in the hazard of the event for males compared to females with Renal Cancer. Importantly, this effect is not statistically significant, with a p-value of 0.8180026.
+
 ```{r, warning=FALSE, echo=TRUE}
 cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
 summary(cox_filtered_residuals)
@@ -616,19 +645,23 @@ cox.zph_result_filtered <- cox.zph(cox_model_filtered)
 print(cox.zph_result_filtered)
 plot(cox.zph_result_filtered)
 ```
+For sex we have a non-signficiant p-value of .3592, indicating no strong evidence of a departure from proportional hazards for the variable. However, for race_category we have a signficiant departure from proportional hazards. This indicates that the effect of race on survival time changes over time. Because of this low p-value we decided to use interaction terms as well to see how our model improves. 
 
+####Interaction Term with Renal Cancer 
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- filter(df_cleaned, Cancer_Group == "Renal Cancer")
 cox_model_filtered <- coxph(Surv(Survival.months) ~ Race_Category * Sex + strata(Age), data = filtered_data)
 cox_summary_filtered <- summary(cox_model_filtered)
 table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
 kable(table_data, 
-      caption = "Cox Proportional Hazard Model Results",
+      caption = "Interaction for Renal Cancer Proportional Hazard Model Results",
       format = "html", 
       align = "c", 
       col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
+None of the individual race categories exhibit a statistically significant impact on the hazard ratio, as indicated by their respective p-values. This suggests that, within the context of Renal Cancer and after accounting for age as a stratification variable, the hazard ratios for these race categories do not significantly differ.The coefficient for being male is -0.0726116, resulting in a hazard ratio of 0.9299620. This implies a non-significant decrease 7.00% in the hazard of the event for males compared to females with Renal Cancer, as the p-value is 0.3309375.None of the interaction terms between Race_Category and SexMale are statistically significant. This indicates that the combined effect of race and sex on the hazard ratio does not significantly differ from the sum of their individual effects.
+
 ```{r, warning=FALSE, echo=TRUE}
 cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
 summary(cox_filtered_residuals)
@@ -637,7 +670,9 @@ cox.zph_result_filtered <- cox.zph(cox_model_filtered)
 print(cox.zph_result_filtered)
 plot(cox.zph_result_filtered)
 ```
+Based on our p-values for the Schoenfield Residual test, we are still violating the proportional hazards. Thus, we decided to do a similar approach as last time since Race_Category seems to be the issue. We decided to do the Binary_Race. 
 
+####Binary Race for Renal Cancer Analysis 
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- filter(df_cleaned, Cancer_Group == "Renal Cancer")
 filtered_data$Binary_Race <- ifelse(filtered_data$Race_Category == "Black", "Black", "Other")
@@ -649,13 +684,13 @@ cox_model_filtered <- coxph(Surv(Survival.months) ~ Binary_Race * Sex + strata(A
 cox_summary_filtered <- summary(cox_model_filtered)
 table_data <- cox_summary_filtered$coefficients[, c("coef", "exp(coef)", "Pr(>|z|)")]
 kable(table_data, 
-      caption = "Cox Proportional Hazard Model Results",
+      caption = "Binary Race for Renal Cancer Cox Proportional Hazard Model Results",
       format = "html", 
       align = "c", 
       col.names = c("Coefficient", "Hazard Ratio", "p-value")) %>%
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
-
+The coefficient for Binary_RaceOther is 0.0125754, resulting in a hazard ratio of 1.0126548. This implies a non-significant increase 1.27% in the hazard of the event for individuals categorized as "Other" compared to those categorized as "Black" with Renal Cancer, as the p-value is 0.5541234.The coefficient for being male is 0.0164791, resulting in a hazard ratio of 1.0166157. This implies a non-significant increase 1.65% in the hazard of the event for males compared to females with Renal Cancer, as the p-value is 0.5131259. The coefficient for the interaction term is -0.0214101, resulting in a hazard ratio of 0.9788175. This implies a non-significant decrease 2.12% in the hazard of the event for individuals categorized as "Other" compared to those categorized as "Black" specifically among males, as the p-value is 0.4257748.
 ```{r, warning=FALSE, echo=TRUE}
 cox_filtered_residuals <- residuals(cox_model_filtered, type = "martingale")
 summary(cox_filtered_residuals)
@@ -664,9 +699,12 @@ cox.zph_result_filtered <- cox.zph(cox_model_filtered)
 print(cox.zph_result_filtered)
 plot(cox.zph_result_filtered)
 ```
+The Schoenfeld residuals show that none of the variables significantly violate the proportional hazards assumption individually. The GLOBAL test reinforces this, suggesting that, collectively, the variables do not provide strong evidence against the proportional hazards assumption. By editing the Race_Category we found that our model improved overall similar to what was done in our Thyroid Cancer analysis. 
 
+##Conclusion
+In this comprehensive analysis, we have successfully identified significant predictors that influence cancer survival, providing insights into the intricate dynamics that contribute to patient outcomes. Our exploration has delved into the multifaceted aspects of survival dynamics, revealing nuances that underscore the complexity of the relationships among various factors and survival duration. The violation of the proportional hazards assumption was identified, prompting a need for further investigation. To address this, we strategically employed advanced methods such as stratification, interaction terms, and the inclusion of time-dependent covariates. We also filtered on different cancer types, such as Thyroid Cancer and Renal Cancer. These approaches were crucial in capturing the evolving nature of predictors over time. Our findings not only illuminate the critical variables impacting cancer survival but also underscore the importance of employing dynamic modeling techniques to unravel the intricacies of survival analysis within this context.By narrowing our focus, we can create a more streamlined and focused model, reducing the influence of confounding variables and enhancing the precision of our analysis.This strategic refinement contributed to a clearer understanding of the specific factors influencing survival outcomes in the context of the selected cancer type. Some of the challenges during this study were that filtering on certain cancer types that had a high mortality, such as pancreatic, led to inflated significance levels, as there's no variability to truly assess the impact of predictors on the vent of intrest within that specific subset. 
 
-
+Throughout our research encompassing all patients and then focusing on specific cancer types like thyroid and renal cancers, we rigorously assessed the proportional hazards assumption within the Cox models. Despite segmenting the data into these subsets, our attempts to conform to the assumption were met with persistent violations, particularly concerning variables related to race categories and their interactions across different cancer types. This iterative exploration, examining various cancer groups, indicated that these factors consistently displayed deviations from the assumption of constant hazard ratios over time. This persistent violation underscores the complexity of temporal effects in these specific cancer contexts, highlighting the need for nuanced modeling approaches that account for dynamic changes in hazard ratios across diverse patient populations. Despite our efforts to refine analyses by focusing on specific cancer types, the challenge of reconciling varying hazard ratios within the proportional hazards framework persisted, emphasizing the intricacies and potential limitations in modeling survival dynamics across different cancer subgroups.
 
 ```
 \[ \cite{Abeysekera2009}, \cite{Ben-Assuli2023}, \cite{Equeter2020}, \cite{Fan2002}, \cite{Gonzalez-Dominguez2022}, \cite{Faruk2018}, \cite{Deo2021}, \cite{Fox2023}, \cite{Bland2004}, \cite{Kuitunen2021}, \cite{Ponkilainene2021}, \cite{Vadeby2010} \]
