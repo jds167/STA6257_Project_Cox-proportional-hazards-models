@@ -456,7 +456,7 @@ plot(cox.zph_result_stratified)
 ```
 Given the violation of assumptions observed in our stratified Cox Proportional Hazard Model, particularly in terms of non-proportional hazards for variables like Sex, Age, and Cancer_Group, we decided to refine our analysis by filtering on a specific cancer type, Thyroid Cancer. This strategic filtering allows us to explore the impact of this particular cancer type while potentially mitigating the observed violations.
 
-#### Filtering Analysis with Thyroid Cancer
+#### Filtered Analysis with Thyroid Cancer
 
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- filter(df_cleaned, Cancer_Group == "Thyroid Cancer")
@@ -482,7 +482,7 @@ plot(cox.zph_result_filtered)
 ```
 By filtering on Thyroid Cancer, we see that our p-values increase a little bit, but our assumptions remain violated. For the Schoenfeld Test the p-value for Race Category is .00042 indicating significant deviation from proportional hazards for Race Category within Thyroid Cancer. For Sex and Age, it has a p-value of .46600 and .09322, respectively. This shows that against a p-value of .05, it is not violating, however our global test emphasizes the challenge in maintaining proportional hazards assumptions within the strata. Based on this, we will use time dependent variables to see if it improves our model. 
 
-#### Time Dependent Analysis
+#### Time Dependent Analysis with Thyroid Cancer
 
 We decided to implement a time dependent covariates as stated above. This approach enables us to examine how the hazard ratios categories change over time, providing a better understanding of their impact on survival outcome. The tt function is used to create time-transformed variables for selected covariates. 
 ```{r, warning=FALSE, echo=TRUE}
@@ -518,7 +518,7 @@ abline(h = 0, col = "purple", lty = 2)
 ```
 The cox.zph() function does not support time-transformed terms. Nevertheless, we can visually inspect the Schoenfeld residuals through plots to identify trends or patterns that might indicate a violation of the proportional hazards assumption. Our visual examination suggests that the proportional hazards assumption is not met. Consequently, we will explore an alternative approach by incorporating interactions in our model.
 
-#### Interaction Analysis
+#### Interaction Analysis with Thyroid Cancer
 
 In survival analysis, an interaction term is often used to assess whether the effect of one variable on the outcome is modified by the presence of another variable. It allows us to explore whether the combined influence of two variables is greater (or different) than the sum of their individual effects.
 
@@ -546,7 +546,7 @@ plot(cox.zph_result_filtered)
 ```
 The overall or global test for the proportional hazards assumption (GLOBAL) combines all the variables and interactions. With a chi-squared test statistic of 24.625, 10 degrees of freedom, and a p-value of 0.00610, there’s evidence suggesting a violation of the proportional hazards assumption in the model among thyroid cancer cases. These results indicate that while some individual variables or interactions might not violate the assumption significantly(like Sex and Age), the model as a whole shows some evidence of departure from proportional hazards assumption among thyroid cancer patients. To further test this out I decided to use stratification in our next analysis. 
 
-#### Filtered Analysis with Stratification 
+#### Filtered Analysis with Stratification on Thyroid Cancer
 
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- filter(df_cleaned, Cancer_Group == "Thyroid Cancer")
@@ -572,7 +572,7 @@ plot(cox.zph_result_filtered)
 ```
 For Sex, the p-value is 0.396, suggesting no statistically significant violation of the proportional hazards assumption. Regarding Age, the p-value is 0.054, indicating a borderline violation; however, it remains above 0.05. The GLOBAL p-value for the entire model is 0.130. Since this value exceeds 0.05, there is no strong statistical evidence against the assumption of proportional hazards for the model as a whole. Since our p-value went up when disregarding the race-category, we decided to further filter our dataset. 
 
-#### Filtering Analysis on Cancer and Race
+#### Filtered Analysis on Cancer and Race with Thyroid Cancer
 
 Below, we create a new variable called "Binary_Race" where we separate it into a binary variable" Black or other. This helps simplify the analysis and helps us dig deeper. 
 ```{r, warning=FALSE, echo=TRUE}
@@ -601,7 +601,7 @@ plot(cox.zph_result_filtered)
 ```
 The martingale residuals display a distribution centered around 0, indicating a reasonable fit of the Cox model to the data. The Schoenfeld residuals show that none of the variables significantly violate the proportional hazards assumption individually. The GLOBAL test reinforces this, suggesting that, collectively, the variables do not provide strong evidence against the proportional hazards assumption. By editing the Race_Category we found that our model improved overall. 
 
-#### Filter Analysis with Renal Cancer
+#### Filtered Analysis with Renal Cancer
 
 Below, we decided to do a similar analysis but focus on Renal Cancer, which was one of our more common cancer types among deceased patients. 
 ```{r, warning=FALSE, echo=TRUE}
@@ -630,7 +630,7 @@ Sex shows no evidence of violating the proportional hazards assumption, both Rac
  
 Given how many of our patients with renal cancer end up passing, it makes sense as to why our variables are statistically significant. We dug deeper and looked into stratifying our model to look at individual variables more closely.
 
-#### Stratification on Renal Cancer Analysis
+#### Stratification Analysis on Renal Cancer 
 
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- filter(df_cleaned, Cancer_Group == "Renal Cancer")
@@ -656,7 +656,7 @@ plot(cox.zph_result_filtered)
 ```
 For sex we have a non-significant p-value of .3592, indicating no strong evidence of a departure from proportional hazards for the variable. However, for race_category we have a significant departure from proportional hazards. This indicates that the effect of race on survival time changes over time. Because of this low p-value we decided to use interaction terms as well to see how our model improves. 
 
-#### Interaction Term with Renal Cancer 
+#### Interaction Analysis with Renal Cancer 
 
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- filter(df_cleaned, Cancer_Group == "Renal Cancer")
@@ -682,7 +682,7 @@ plot(cox.zph_result_filtered)
 ```
 Based on our p-values for the Schoenfield Residual test, we are still violating the proportional hazards. Thus, we decided to do a similar approach as last time since Race_Category seems to be the issue. We decided to do the Binary_Race. 
 
-####Binary Race for Renal Cancer Analysis 
+#### Filtering Analysis on Race with Renal Cancer 
 ```{r, warning=FALSE, echo=TRUE}
 filtered_data <- filter(df_cleaned, Cancer_Group == "Renal Cancer")
 filtered_data$Binary_Race <- ifelse(filtered_data$Race_Category == "Black", "Black", "Other")
